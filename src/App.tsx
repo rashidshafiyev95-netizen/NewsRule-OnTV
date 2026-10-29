@@ -20,7 +20,9 @@ import {
   Lock,
   Maximize2,
   RefreshCw,
-  CloudSun
+  CloudSun,
+  Globe,
+  Star
 } from 'lucide-react';
 import {
   DeviceProfile,
@@ -39,6 +41,7 @@ import { soundFx } from './services/soundFx';
 import { speechAnchor } from './services/speechAnchor';
 import { AIStudioClient } from './services/aiStudioClient';
 import { MOCK_NEWS_ARTICLES } from './data/mockNews';
+import { AppLanguage, getInitialAppLanguage, saveAppLanguage, TRANSLATIONS } from './services/i18n';
 import { SecurityShield } from './components/SecurityShield';
 import { TermsModal } from './components/TermsModal';
 import { HardwareDiagnosticsModal } from './components/HardwareDiagnosticsModal';
@@ -48,6 +51,8 @@ import { ModernRichView } from './components/ModernRichView';
 import { ArticleDetailModal } from './components/ArticleDetailModal';
 import { TeletextView } from './components/TeletextView';
 import { WeatherDisplay } from './components/WeatherDisplay';
+import { LanguageSelectModal } from './components/LanguageSelectModal';
+import { GooglePlayReviewModal } from './components/GooglePlayReviewModal';
 
 const CATEGORIES: NewsCategory[] = [
   'All',
@@ -78,6 +83,10 @@ export default function App() {
   const [showSecurityModal, setShowSecurityModal] = useState<boolean>(false);
   const [showDiagnosticsModal, setShowDiagnosticsModal] = useState<boolean>(false);
   const [showTeletext, setShowTeletext] = useState<boolean>(false);
+  const [showLanguageModal, setShowLanguageModal] = useState<boolean>(false);
+  const [showPlayReviewModal, setShowPlayReviewModal] = useState<boolean>(false);
+  const [currentLanguage, setCurrentLanguage] = useState<AppLanguage>(() => getInitialAppLanguage());
+  const [articlesReadCount, setArticlesReadCount] = useState<number>(0);
   const [termsAccepted, setTermsAccepted] = useState<boolean>(() => {
     try {
       return localStorage.getItem('newsrule_terms_accepted') === 'true';
@@ -266,12 +275,30 @@ export default function App() {
     const item = filteredArticles[focusedIndex];
     if (item) {
       setActiveArticle(item);
+      setArticlesReadCount((prev) => {
+        const next = prev + 1;
+        if (next === 2) {
+          // Official Google Play Review Manager milestone trigger (MainActivity.java showGooglePlayReviewPopup)
+          setTimeout(() => {
+            setShowPlayReviewModal(true);
+          }, 1500);
+        }
+        return next;
+      });
     }
-  }, [showTermsModal, showDiagnosticsModal, showSecurityModal, activeArticle, activeProfile, focusZone, filteredArticles, focusedIndex]);
+  }, [showTermsModal, showDiagnosticsModal, showSecurityModal, showLanguageModal, showPlayReviewModal, activeArticle, activeProfile, focusZone, filteredArticles, focusedIndex]);
 
   const handleBack = useCallback(() => {
     if (activeArticle) {
       setActiveArticle(null);
+      return;
+    }
+    if (showLanguageModal) {
+      setShowLanguageModal(false);
+      return;
+    }
+    if (showPlayReviewModal) {
+      setShowPlayReviewModal(false);
       return;
     }
     if (showTeletext) {
@@ -300,7 +327,7 @@ export default function App() {
       setActiveCategory('All');
       setFocusedIndex(0);
     }
-  }, [activeArticle, showTeletext, showTermsModal, showDiagnosticsModal, showSecurityModal, activeProfile, focusZone, activeCategory]);
+  }, [activeArticle, showLanguageModal, showPlayReviewModal, showTeletext, showTermsModal, showDiagnosticsModal, showSecurityModal, activeProfile, focusZone, activeCategory]);
 
   // Global TV Remote Keyboard Listeners (Arrow keys, Enter, Backspace/Esc, Shortcuts)
   useEffect(() => {
@@ -375,6 +402,13 @@ export default function App() {
           e.preventDefault();
           soundFx.playSelect();
           setShowTermsModal((prev) => !prev);
+          break;
+        case 'l':
+        case 'L':
+          // Toggle Language Selection Dialog (res/layout/dialog_language_select.xml)
+          e.preventDefault();
+          soundFx.playSelect();
+          setShowLanguageModal((prev) => !prev);
           break;
         default:
           break;
@@ -507,10 +541,36 @@ export default function App() {
               setShowTeletext(true);
             }}
             className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-300 text-xs font-mono hover:text-amber-300"
-            title="Open Retro Teletext Ceefax mode"
+            title="Open Retro Teletext Ceefax mode [X]"
           >
             <Radio className="w-3.5 h-3.5 text-cyan-400" />
             <span>TXT [X]</span>
+          </button>
+
+          {/* Language Selection Dialog Button [L] */}
+          <button
+            onClick={() => {
+              soundFx.playSelect();
+              setShowLanguageModal(true);
+            }}
+            className="px-2.5 py-1.5 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-zinc-200 text-xs font-mono flex items-center gap-1.5 transition-colors"
+            title="Select Language / Dil Seçimi / Выберите язык [L]"
+          >
+            <Globe className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="font-bold">{currentLanguage.toUpperCase()}</span>
+            <span className="text-[10px] px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 font-sans hidden md:inline">[L]</span>
+          </button>
+
+          {/* Google Play Review Button */}
+          <button
+            onClick={() => {
+              soundFx.playSelect();
+              setShowPlayReviewModal(true);
+            }}
+            className="p-2 rounded-xl bg-zinc-900 border border-zinc-700 text-amber-400 hover:bg-zinc-800 transition-colors"
+            title="Google Play Store Review (ReviewManager)"
+          >
+            <Star className="w-4 h-4 fill-amber-400/20" />
           </button>
 
           {/* Terms & Copyright Button */}
@@ -520,7 +580,7 @@ export default function App() {
               setShowTermsModal(true);
             }}
             className="p-2 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-amber-400 hover:bg-zinc-800 transition-colors"
-            title="Terms of Service & Proprietary Policy"
+            title="Terms of Service & Proprietary Policy [S]"
           >
             <FileText className="w-4 h-4" />
           </button>
@@ -659,6 +719,23 @@ export default function App() {
         currentMode={profileMode}
         onSelectMode={handleSelectProfileMode}
         onRefreshMetrics={handleRefreshHardware}
+      />
+
+      {/* Android TV Language Select Modal (dialog_language_select.xml) */}
+      <LanguageSelectModal
+        isOpen={showLanguageModal}
+        onClose={() => setShowLanguageModal(false)}
+        currentLanguage={currentLanguage}
+        onSelectLanguage={(lang) => {
+          setCurrentLanguage(lang);
+          soundFx.playSelect();
+        }}
+      />
+
+      {/* Google Play Review Flow Modal (MainActivity.java ReviewManager) */}
+      <GooglePlayReviewModal
+        isOpen={showPlayReviewModal}
+        onClose={() => setShowPlayReviewModal(false)}
       />
     </div>
   );

@@ -413,12 +413,67 @@ public class AIStudioClient {
         HardwareDetector.DeviceProfile profile = HardwareDetector.detectDevicePerformance(context);
         final boolean isLegacy = (profile == HardwareDetector.DeviceProfile.LEGACY_LITE);
 
-        // Craft optimization instructions for model payload
         String systemInstruction = "You are NewsRule, a strict text aggregator. Return a JSON array of recent news for category: " + category + ". "
                 + "Each item must have 'title' and 'summary' (max 3 punchy bullet points). "
                 + (isLegacy ? "Do not include any image fields or media links." : "Include an 'imageUrl' field with a valid thumbnail link.");
+    }
+}`}
+            </pre>
+          </div>
 
-        // Dispatches HTTP request to Gemini API and delivers parsed JSONArray
+          {/* Reference Android TV Language Select XML Layout */}
+          <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                Language Dialog (res/layout/dialog_language_select.xml)
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500">English / Azərbaycanca / Русский</span>
+            </div>
+            <pre className="font-mono text-xs bg-zinc-900/90 text-zinc-300 p-3 rounded-lg overflow-x-auto border border-zinc-800 leading-relaxed max-h-56">
+{`<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#111111">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Language / Dil Seçimi / Выберите язык"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <Button android:id="@+id/btnLangEn" android:text="English" android:focusable="true" android:layout_marginBottom="8dp"/>
+    <Button android:id="@+id/btnLangAz" android:text="Azərbaycan" android:focusable="true" android:layout_marginBottom="8dp"/>
+    <Button android:id="@+id/btnLangRu" android:text="Русский" android:focusable="true"/>
+</LinearLayout>`}
+            </pre>
+          </div>
+
+          {/* Reference Google Play Review Manager */}
+          <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">
+                Google Play Core ReviewManager (MainActivity.java)
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500">ReviewManagerFactory</span>
+            </div>
+            <pre className="font-mono text-xs bg-zinc-900/90 text-zinc-300 p-3 rounded-lg overflow-x-auto border border-zinc-800 leading-relaxed max-h-56">
+{`ReviewManager reviewManager = ReviewManagerFactory.create(this);
+Task<ReviewInfo> request = reviewManager.requestReviewFlow();
+request.addOnCompleteListener(task -> {
+    if (task.isSuccessful()) {
+        reviewInfo = task.getResult();
+    }
+});
+
+public void showGooglePlayReviewPopup() {
+    if (reviewInfo != null) {
+        reviewManager.launchReviewFlow(this, reviewInfo);
     }
 }`}
             </pre>

@@ -4,9 +4,3 @@
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
-git init
-git add .
-git commit -m "Initial commit: NewsRule with Hardware Detection and Weather"
-git branch -M main
-git remote add origin https://github.com
-git push -u origin main
