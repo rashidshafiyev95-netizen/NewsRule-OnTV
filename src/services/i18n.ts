@@ -7,6 +7,9 @@ export interface Translations {
   langEn: string;
   langAz: string;
   langRu: string;
+  langDescEn: string;
+  langDescAz: string;
+  langDescRu: string;
   categories: {
     all: string;
     weather: string;
@@ -22,6 +25,7 @@ export interface Translations {
   channelHeadlines: string;
   rulesBasedSummary: string;
   rulesBasedTakeaways: string;
+  detailedReport: string;
   openInFullReader: string;
   backToMenu: string;
   readAloud: string;
@@ -45,6 +49,26 @@ export interface Translations {
   playReviewSubmit: string;
   playReviewLater: string;
   teletextTitle: string;
+  broadcastEdition: string;
+  liveBroadcast: string;
+  close: string;
+  navHints: {
+    navigate: string;
+    open: string;
+    mode: string;
+    back: string;
+    language: string;
+  };
+  tickerBreaking: string;
+  tickerTech: string;
+  tickerMarkets: string;
+  tickerPolicy: string;
+  tickerItems: {
+    breaking: string;
+    tech: string;
+    markets: string;
+    policy: string;
+  };
 }
 
 export const TRANSLATIONS: Record<AppLanguage, Translations> = {
@@ -55,6 +79,9 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     langEn: 'English',
     langAz: 'Azərbaycan',
     langRu: 'Русский',
+    langDescEn: 'Default Global Broadcast',
+    langDescAz: 'Ana dilində xəbərlər',
+    langDescRu: 'Для ТВ бабушки и дедушки',
     categories: {
       all: 'All',
       weather: 'Weather',
@@ -70,6 +97,7 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     channelHeadlines: 'Channel Headlines',
     rulesBasedSummary: 'Rules-based AI summaries',
     rulesBasedTakeaways: 'Rules-Based AI Summary:',
+    detailedReport: 'Detailed Telemetry & Reporting',
     openInFullReader: 'Open In Full Reader',
     backToMenu: 'Back to Menu',
     readAloud: 'Read Aloud [P]',
@@ -93,6 +121,26 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     playReviewSubmit: 'Submit Review',
     playReviewLater: 'Not Now',
     teletextTitle: 'CEEFAX/TV TEXT',
+    broadcastEdition: 'Broadcast Edition • Auto-Adaptive Display Engine',
+    liveBroadcast: 'Live Broadcast',
+    close: 'Close',
+    navHints: {
+      navigate: '[▲/▼/◄/►] Navigate',
+      open: '[OK] Open',
+      mode: '[T] Mode',
+      back: '[Esc] Back',
+      language: '[L] Language',
+    },
+    tickerBreaking: 'BREAKING:',
+    tickerTech: 'TECH:',
+    tickerMarkets: 'MARKETS:',
+    tickerPolicy: 'POLICY:',
+    tickerItems: {
+      breaking: 'Global Energy Summit ratifies Unified Grid Protocol 2030',
+      tech: 'Silicon photonics chips shatter bandwidth benchmarks with 3.2 Tbps throughput',
+      markets: 'Central bank liquidity adjustments bolster industrial manufacturing indices',
+      policy: 'Proprietary Content & Anti-Copying Policy enforced under NewsRule terms',
+    },
   },
   az: {
     appName: 'NewsRule',
@@ -101,6 +149,9 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     langEn: 'English',
     langAz: 'Azərbaycan',
     langRu: 'Русский',
+    langDescEn: 'Qlobal İngilis Yayımı',
+    langDescAz: 'Ana dilində xəbərlər',
+    langDescRu: 'Nənə və baba televizoru üçün',
     categories: {
       all: 'Hamısı',
       weather: 'Hava',
@@ -116,6 +167,7 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     channelHeadlines: 'Kanal Başlıqları',
     rulesBasedSummary: 'Qaydalara əsaslanan AI xülasəsi',
     rulesBasedTakeaways: 'Qaydalara Əsaslanan AI Xülasəsi:',
+    detailedReport: 'Ətraflı Telemetriya və Hesabat',
     openInFullReader: 'Tam Məqaləni Oxu',
     backToMenu: 'Menyuya Qayıt',
     readAloud: 'Səsləndir [P]',
@@ -139,6 +191,26 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     playReviewSubmit: 'Rəy Göndər',
     playReviewLater: 'Daha Sonra',
     teletextTitle: 'TELETEKST / CEEFAX',
+    broadcastEdition: 'Yayım Nəşri • Avtomatik Uyğunlaşan Ekran Mühərriki',
+    liveBroadcast: 'Canlı Yayım',
+    close: 'Bağla',
+    navHints: {
+      navigate: '[▲/▼/◄/►] Hərəkət',
+      open: '[OK] Seç',
+      mode: '[T] Rejim',
+      back: '[Esc] Geri',
+      language: '[L] Dil',
+    },
+    tickerBreaking: 'TƏCİLİ:',
+    tickerTech: 'TEXNOLOGİYA:',
+    tickerMarkets: 'BAZARLAR:',
+    tickerPolicy: 'QAYDALAR:',
+    tickerItems: {
+      breaking: 'Qlobal Enerji Sammiti Vahid Şəbəkə Protokolu 2030-u təsdiqlədi',
+      tech: 'Silisium foton çipləri 3.2 Tbps ötürmə sürəti ilə rekord qırdı',
+      markets: 'Mərkəzi bankların likvidlik tənzimləmələri sənaye indekslərini möhkəmləndirdi',
+      policy: 'Müstəsna məzmun siyasəti NewsRule şərtlərinə uyğun qorunur',
+    },
   },
   ru: {
     appName: 'NewsRule',
@@ -147,6 +219,9 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     langEn: 'English',
     langAz: 'Azərbaycan',
     langRu: 'Русский',
+    langDescEn: 'Глобальный англоязычный эфир',
+    langDescAz: 'Новости на азербайджанском',
+    langDescRu: 'Для ТВ бабушки и дедушки',
     categories: {
       all: 'Все',
       weather: 'Погода',
@@ -162,6 +237,7 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     channelHeadlines: 'Заголовки каналов',
     rulesBasedSummary: 'ИИ-сводки по строгим правилам',
     rulesBasedTakeaways: 'Ключевые пункты ИИ-сводки:',
+    detailedReport: 'Подробная телеметрия и отчет',
     openInFullReader: 'Открыть статью целиком',
     backToMenu: 'Назад в меню',
     readAloud: 'Озвучить [P]',
@@ -185,11 +261,60 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     playReviewSubmit: 'Оценить приложение',
     playReviewLater: 'Позже',
     teletextTitle: 'ТЕЛЕТЕКСТ CEEFAX',
+    broadcastEdition: 'Эфирный выпуск • Адаптивный экранный движок',
+    liveBroadcast: 'Прямой эфир',
+    close: 'Закрыть',
+    navHints: {
+      navigate: '[▲/▼/◄/►] Навигация',
+      open: '[OK] Открыть',
+      mode: '[T] Режим',
+      back: '[Esc] Назад',
+      language: '[L] Язык',
+    },
+    tickerBreaking: 'СРОЧНО:',
+    tickerTech: 'ТЕХНОЛОГИИ:',
+    tickerMarkets: 'РЫНКИ:',
+    tickerPolicy: 'ПРАВИЛА:',
+    tickerItems: {
+      breaking: 'Всемирный энергетический саммит утвердил Единый протокол сетей 2030',
+      tech: 'Кремниевые фотонные чипы побили рекорды пропускной способности — 3.2 Тбит/с',
+      markets: 'Центробанки скорректировали ликвидность в пользу индустриального сектора',
+      policy: 'Политика защиты авторского контента активна в эфире NewsRule',
+    },
   },
 };
 
 const PREFS_NAME = 'NewsRuleSettings';
 const KEY_APP_LANG = 'app_lang';
+
+/**
+ * Maps category keys to localized category title
+ */
+export function getLocalizedCategoryName(category: string, lang: AppLanguage): string {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  switch (category) {
+    case 'All':
+      return t.categories.all;
+    case 'Weather':
+      return t.categories.weather;
+    case 'Breaking':
+      return t.categories.breaking;
+    case 'Tech & AI':
+      return t.categories.tech;
+    case 'Markets':
+      return t.categories.markets;
+    case 'World':
+      return t.categories.world;
+    case 'Science':
+      return t.categories.science;
+    case 'Sports':
+      return t.categories.sports;
+    case 'Entertainment':
+      return t.categories.entertainment;
+    default:
+      return category;
+  }
+}
 
 /**
  * Port of Android TV OS system language detection:
@@ -200,13 +325,21 @@ export function getInitialAppLanguage(): AppLanguage {
   if (typeof window === 'undefined') return 'en';
 
   try {
-    const saved = localStorage.getItem(`${PREFS_NAME}_${KEY_APP_LANG}`) as AppLanguage | null;
+    // Check both standard Android SharedPreferences key formats
+    const saved =
+      (localStorage.getItem(`${PREFS_NAME}_${KEY_APP_LANG}`) as AppLanguage | null) ||
+      (localStorage.getItem(KEY_APP_LANG) as AppLanguage | null);
+
     if (saved === 'en' || saved === 'az' || saved === 'ru') {
       return saved;
     }
 
-    // Read system language directly from the OS
-    const systemLanguage = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
+    // Read system language directly from Android TV OS / browser
+    const systemLanguage = (
+      navigator.language ||
+      (navigator.languages && navigator.languages[0]) ||
+      'en'
+    ).toLowerCase();
 
     let defaultLang: AppLanguage = 'en';
     if (systemLanguage.startsWith('ru')) {
@@ -217,7 +350,9 @@ export function getInitialAppLanguage(): AppLanguage {
       defaultLang = 'en';
     }
 
+    // Save initial configuration
     localStorage.setItem(`${PREFS_NAME}_${KEY_APP_LANG}`, defaultLang);
+    localStorage.setItem(KEY_APP_LANG, defaultLang);
     return defaultLang;
   } catch {
     return 'en';
@@ -227,6 +362,11 @@ export function getInitialAppLanguage(): AppLanguage {
 export function saveAppLanguage(lang: AppLanguage): void {
   try {
     localStorage.setItem(`${PREFS_NAME}_${KEY_APP_LANG}`, lang);
+    localStorage.setItem(KEY_APP_LANG, lang);
+    // Dispatch cross-component notification
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('newsrule-language-changed', { detail: lang }));
+    }
   } catch {
     // Storage fallback
   }

@@ -1,40 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CloudSun, RefreshCw, Volume2, VolumeX, ShieldCheck, MapPin } from 'lucide-react';
 import { AIStudioClient } from '../services/aiStudioClient';
 import { soundFx } from '../services/soundFx';
 import { speechAnchor } from '../services/speechAnchor';
+import { AppLanguage, TRANSLATIONS } from '../services/i18n';
 
 interface WeatherDisplayProps {
   onBackToNews?: () => void;
   isCompact?: boolean;
+  currentLanguage?: AppLanguage;
 }
 
 export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
   onBackToNews,
   isCompact = false,
+  currentLanguage = 'en',
 }) => {
+  const t = TRANSLATIONS[currentLanguage] || TRANSLATIONS.en;
+
   const [weather, setWeather] = useState<{
     temp: number | string;
     condition: string;
     summary: string[];
   }>({
     temp: '--',
-    condition: 'Loading Forecast...',
-    summary: ['• Checking local conditions...'],
+    condition: currentLanguage === 'ru' ? 'Загрузка сводки...' : currentLanguage === 'az' ? 'Hava məlumatı yüklənir...' : 'Loading Forecast...',
+    summary: [currentLanguage === 'ru' ? '• Проверка условий...' : currentLanguage === 'az' ? '• Şərait yoxlanılır...' : '• Checking local conditions...'],
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
-  const loadWeather = async () => {
+  const loadWeather = useCallback(async () => {
     setIsLoading(true);
-    const data = await AIStudioClient.fetchBakuWeather();
+    const data = await AIStudioClient.fetchBakuWeather(currentLanguage);
     setWeather(data);
     setIsLoading(false);
-  };
+  }, [currentLanguage]);
 
   useEffect(() => {
     loadWeather();
-  }, []);
+  }, [loadWeather]);
 
   const handleReadAloud = () => {
     soundFx.playSelect();
@@ -43,11 +48,15 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
       setIsSpeaking(false);
     } else {
       setIsSpeaking(true);
-      speechAnchor.speakArticle(
-        `Weather in Baku, Azerbaijan is currently ${weather.temp} degrees Celsius, with ${weather.condition}`,
-        weather.summary
-      );
-      // Auto-reset isSpeaking when speech ends
+      const headline =
+        currentLanguage === 'ru'
+          ? `Погода в Баку: ${weather.temp} градусов Цельсия, ${weather.condition}`
+          : currentLanguage === 'az'
+          ? `Bakıda hava: ${weather.temp} dərəcə isti, ${weather.condition}`
+          : `Weather in Baku, Azerbaijan is currently ${weather.temp} degrees Celsius, with ${weather.condition}`;
+
+      speechAnchor.speakArticle(headline, weather.summary, undefined, currentLanguage);
+
       const checkInterval = setInterval(() => {
         if (!speechAnchor.isSpeaking()) {
           setIsSpeaking(false);
@@ -72,7 +81,7 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
       className="w-full flex-1 flex flex-col justify-between rounded-xl border border-zinc-800 select-none transition-none"
       style={{
         backgroundColor: '#000000',
-        padding: '32dp', // exact android:padding="32dp"
+        padding: '32px',
       }}
     >
       <div>
@@ -92,7 +101,7 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
                 </span>
               </div>
               <p className="text-xs text-zinc-400 font-mono">
-                NewsRule AI Weather Assistant • Caspian Basin Telemetry
+                {t.weatherTitle}
               </p>
             </div>
           </div>
@@ -107,7 +116,9 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
               title="Refresh Forecast"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-amber-400' : ''}`} />
-              <span className="hidden sm:inline">Refresh [R]</span>
+              <span className="hidden sm:inline">
+                {currentLanguage === 'ru' ? 'Обновить [R]' : currentLanguage === 'az' ? 'Yenilə [R]' : 'Refresh [R]'}
+              </span>
             </button>
 
             <button
@@ -119,7 +130,11 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
               }`}
             >
               {isSpeaking ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
-              <span>{isSpeaking ? 'Reading Forecast...' : 'Voice Brief [P]'}</span>
+              <span>
+                {isSpeaking
+                  ? (currentLanguage === 'ru' ? 'Озвучивается...' : currentLanguage === 'az' ? 'Oxunur...' : 'Reading Forecast...')
+                  : (currentLanguage === 'ru' ? 'Озвучить [P]' : currentLanguage === 'az' ? 'Səsləndir [P]' : 'Voice Brief [P]')}
+              </span>
             </button>
           </div>
         </div>
@@ -129,8 +144,8 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
           id="weatherTempText"
           className="font-bold tracking-tight text-white leading-none font-mono"
           style={{
-            fontSize: '72px', // android:textSize="72sp"
-            color: '#FFFFFF', // android:textColor="#FFFFFF"
+            fontSize: '72px',
+            color: '#FFFFFF',
             fontWeight: 'bold',
           }}
         >
@@ -142,9 +157,9 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
           id="weatherConditionText"
           className="font-mono mt-2"
           style={{
-            fontSize: '24px', // android:textSize="24sp"
-            color: '#CCCCCC', // android:textColor="#CCCCCC"
-            marginBottom: '24px', // android:layout_marginBottom="24dp"
+            fontSize: '24px',
+            color: '#CCCCCC',
+            marginBottom: '24px',
           }}
         >
           {weather.condition}
@@ -155,13 +170,13 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
           id="weatherBriefText"
           className="font-mono p-5 rounded-xl bg-zinc-950 border-l-4 border-amber-400 border-y border-r border-zinc-800 space-y-3"
           style={{
-            fontSize: '18px', // android:textSize="18sp"
-            color: '#EAEAEA', // android:textColor="#EAEAEA"
-            lineHeight: '1.6', // android:lineSpacingExtra="8dp"
+            fontSize: '18px',
+            color: '#EAEAEA',
+            lineHeight: '1.6',
           }}
         >
           <div className="text-xs font-bold font-mono text-amber-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-            <span>NewsRule Weather Assistant Brief & Clothing Advisory:</span>
+            <span>{t.weatherBriefTitle}</span>
             <span className="text-[10px] text-zinc-500">Gemini Powered</span>
           </div>
 
@@ -181,9 +196,14 @@ export const WeatherDisplay: React.FC<WeatherDisplayProps> = ({
         <span className="flex items-center gap-1.5 text-emerald-400">
           <ShieldCheck className="w-3.5 h-3.5" /> Meteorological Wire Verified
         </span>
-        <span className="text-zinc-400">
-          Press [◄] or [Esc] to Return to Channels
-        </span>
+        <button
+          onClick={() => {
+            if (onBackToNews) onBackToNews();
+          }}
+          className="text-zinc-400 hover:text-amber-400 transition-colors"
+        >
+          {t.backToMenu} [Esc]
+        </button>
       </div>
     </div>
   );

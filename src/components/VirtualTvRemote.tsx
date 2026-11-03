@@ -15,9 +15,11 @@ import {
   Maximize2,
   Radio,
   Power,
-  CloudSun
+  CloudSun,
+  Globe
 } from 'lucide-react';
 import { soundFx } from '../services/soundFx';
+import { AppLanguage } from '../services/i18n';
 
 interface VirtualTvRemoteProps {
   onNavigate: (direction: 'up' | 'down' | 'left' | 'right') => void;
@@ -28,10 +30,12 @@ interface VirtualTvRemoteProps {
   onOpenTerms: () => void;
   onOpenDiagnostics: () => void;
   onToggleSpeech: () => void;
+  onOpenLanguage?: () => void;
   onSelectWeather?: () => void;
   isSpeaking: boolean;
   currentProfile: 'LEGACY_LITE' | 'MODERN_RICH';
   isTeletextOpen: boolean;
+  currentLanguage?: AppLanguage;
 }
 
 export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
@@ -43,10 +47,12 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
   onOpenTerms,
   onOpenDiagnostics,
   onToggleSpeech,
+  onOpenLanguage,
   onSelectWeather,
   isSpeaking,
   currentProfile,
   isTeletextOpen,
+  currentLanguage = 'en',
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
@@ -74,7 +80,7 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
           <Maximize2 className="w-3 h-3 text-zinc-400" />
         </button>
       ) : (
-        <div className="w-64 bg-zinc-950/95 border-2 border-zinc-700/80 rounded-3xl p-4 shadow-2xl backdrop-blur-xl text-zinc-200">
+        <div className="w-72 bg-zinc-950/95 border-2 border-zinc-700/80 rounded-3xl p-4 shadow-2xl backdrop-blur-xl text-zinc-200">
           {/* Remote Top Bar */}
           <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5 mb-3">
             <div className="flex items-center gap-1.5">
@@ -101,17 +107,17 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
             </div>
           </div>
 
-          {/* Quick Action Pills */}
-          <div className="grid grid-cols-3 gap-1 mb-3">
+          {/* Quick Action Pills: 4 Key TV Operations including Language [L] */}
+          <div className="grid grid-cols-4 gap-1 mb-3">
             <button
               onClick={() => {
                 soundFx.playToggleMode();
                 onToggleMode();
               }}
-              className="py-1.5 px-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-[10px] font-semibold text-amber-300 border border-amber-500/30 flex items-center justify-center gap-1 transition-colors"
-              title="Switch between Old TV (Legacy Lite) and Modern 4K"
+              className="py-1.5 px-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-[10px] font-semibold text-amber-300 border border-amber-500/30 flex items-center justify-center gap-0.5 transition-colors"
+              title="Switch between Old TV (Legacy Lite) and Modern 4K [T]"
             >
-              <Tv className="w-3 h-3 text-amber-400" />
+              <Tv className="w-3 h-3 text-amber-400 shrink-0" />
               <span>{currentProfile === 'LEGACY_LITE' ? 'Old [T]' : '4K [T]'}</span>
             </button>
 
@@ -120,10 +126,10 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
                 soundFx.playSelect();
                 if (onSelectWeather) onSelectWeather();
               }}
-              className="py-1.5 px-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-[10px] font-semibold text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-1 transition-colors"
-              title="NewsRule Weather Assistant (Baku)"
+              className="py-1.5 px-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-[10px] font-semibold text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-0.5 transition-colors"
+              title="NewsRule Weather Assistant (Baku) [W]"
             >
-              <CloudSun className="w-3 h-3 text-amber-400" />
+              <CloudSun className="w-3 h-3 text-amber-400 shrink-0" />
               <span>Baku [W]</span>
             </button>
 
@@ -132,15 +138,28 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
                 soundFx.playSelect();
                 onToggleTeletext();
               }}
-              className={`py-1.5 px-1.5 rounded-lg text-[10px] font-semibold border flex items-center justify-center gap-1 transition-colors ${
+              className={`py-1.5 px-1 rounded-lg text-[10px] font-semibold border flex items-center justify-center gap-0.5 transition-colors ${
                 isTeletextOpen
                   ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500'
                   : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-700'
               }`}
-              title="Toggle Retro Teletext / Ceefax mode"
+              title="Toggle Retro Teletext / Ceefax mode [X]"
             >
-              <Radio className="w-3 h-3 text-cyan-400" />
+              <Radio className="w-3 h-3 text-cyan-400 shrink-0" />
               <span>TXT [X]</span>
+            </button>
+
+            {/* Language Selection Dialog Shortcut Button [L] */}
+            <button
+              onClick={() => {
+                soundFx.playSelect();
+                if (onOpenLanguage) onOpenLanguage();
+              }}
+              className="py-1.5 px-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-[10px] font-bold text-amber-400 border border-amber-500/40 flex items-center justify-center gap-0.5 transition-colors"
+              title="Select Language / Dil Seçimi / Выберите язык [L]"
+            >
+              <Globe className="w-3 h-3 text-cyan-400 shrink-0" />
+              <span className="uppercase">{currentLanguage} [L]</span>
             </button>
           </div>
 
@@ -217,7 +236,7 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
                 onBack();
               }}
               className="py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-[10px] text-zinc-300 border border-zinc-800 flex flex-col items-center justify-center gap-0.5 active:bg-zinc-700"
-              title="Back button"
+              title="Back button [Esc]"
             >
               <RotateCcw className="w-3.5 h-3.5 text-zinc-400" />
               <span>Back [Esc]</span>
@@ -233,10 +252,10 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
                   ? 'bg-amber-500/20 text-amber-300 border-amber-500'
                   : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-800'
               }`}
-              title="Voice Anchor Read Aloud"
+              title="Voice Anchor Read Aloud [P]"
             >
               <Radio className={`w-3.5 h-3.5 ${isSpeaking ? 'text-amber-400 animate-pulse' : 'text-zinc-400'}`} />
-              <span>{isSpeaking ? 'Mute Voice' : 'AI Voice'}</span>
+              <span>{isSpeaking ? 'Mute' : 'Voice [P]'}</span>
             </button>
 
             <button
@@ -264,7 +283,7 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
               <FileText className="w-3 h-3" />
               <span>Terms & Security</span>
             </button>
-            <span className="text-zinc-500">D-Pad / Keys</span>
+            <span className="text-zinc-400">TV Remote</span>
           </div>
         </div>
       )}

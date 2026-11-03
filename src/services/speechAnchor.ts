@@ -1,16 +1,26 @@
+import { AppLanguage, getInitialAppLanguage } from './i18n';
+
 /**
  * Speech Synthesis TV News Anchor service.
- * Delivers broadcast audio reading of news articles and AI bullet points.
+ * Delivers broadcast audio reading of news articles and AI bullet points in English, Azerbaijani, and Russian.
  */
 class SpeechAnchorService {
   private synth: SpeechSynthesis | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSpeakingState: boolean = false;
   private listeners: Set<(isSpeaking: boolean) => void> = new Set();
+  private currentLang: AppLanguage = getInitialAppLanguage();
 
   constructor() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       this.synth = window.speechSynthesis;
+    }
+  }
+
+  public setLanguage(lang: AppLanguage) {
+    this.currentLang = lang;
+    if (this.isSpeakingState) {
+      this.stop();
     }
   }
 
@@ -26,16 +36,49 @@ class SpeechAnchorService {
     this.listeners.forEach((cb) => cb(state));
   }
 
-  public speakArticle(title: string, bulletPoints: string[], fullContent?: string) {
+  public speakArticle(
+    title: string,
+    bulletPoints: string[],
+    fullContent?: string,
+    lang?: AppLanguage
+  ) {
     if (!this.synth) return;
     this.stop();
 
-    const textToSpeak = `NewsRule Broadcast. Headline: ${title}. Key takeaways: ${bulletPoints.join('. ')}. Detailed report: ${fullContent ? fullContent.slice(0, 300) : ''}`;
+    const activeLang = lang || this.currentLang;
+    let textToSpeak = '';
+
+    if (activeLang === 'ru') {
+      textToSpeak = `Эфир NewsRule. Главная новость: ${title}. Ключевые пункты: ${bulletPoints.join('. ')}. Подробный репортаж: ${fullContent ? fullContent.slice(0, 300) : ''}`;
+    } else if (activeLang === 'az') {
+      textToSpeak = `NewsRule Yayımı. Başlıq: ${title}. Əsas məqamlar: ${bulletPoints.join('. ')}. Ətraflı hesabat: ${fullContent ? fullContent.slice(0, 300) : ''}`;
+    } else {
+      textToSpeak = `NewsRule Broadcast. Headline: ${title}. Key takeaways: ${bulletPoints.join('. ')}. Detailed report: ${fullContent ? fullContent.slice(0, 300) : ''}`;
+    }
+
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
-    // Pick clear English anchor voice if available
+    // Pick appropriate localized voice
     const voices = this.synth.getVoices();
-    const anchorVoice = voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('News')));
+    let anchorVoice: SpeechSynthesisVoice | undefined;
+
+    if (activeLang === 'ru') {
+      anchorVoice =
+        voices.find((v) => v.lang.startsWith('ru') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Yuri') || v.name.includes('Milena'))) ||
+        voices.find((v) => v.lang.startsWith('ru'));
+      utterance.lang = 'ru-RU';
+    } else if (activeLang === 'az') {
+      anchorVoice =
+        voices.find((v) => v.lang.startsWith('az')) ||
+        voices.find((v) => v.lang.startsWith('tr')); // Turkish is closely phonetically compatible fallback
+      utterance.lang = anchorVoice?.lang || 'az-AZ';
+    } else {
+      anchorVoice =
+        voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('News'))) ||
+        voices.find((v) => v.lang.startsWith('en'));
+      utterance.lang = 'en-US';
+    }
+
     if (anchorVoice) {
       utterance.voice = anchorVoice;
     }
@@ -66,11 +109,16 @@ class SpeechAnchorService {
     this.notify(false);
   }
 
-  public toggle(title: string, bulletPoints: string[], fullContent?: string) {
+  public toggle(
+    title: string,
+    bulletPoints: string[],
+    fullContent?: string,
+    lang?: AppLanguage
+  ) {
     if (this.isSpeakingState) {
       this.stop();
     } else {
-      this.speakArticle(title, bulletPoints, fullContent);
+      this.speakArticle(title, bulletPoints, fullContent, lang);
     }
   }
 

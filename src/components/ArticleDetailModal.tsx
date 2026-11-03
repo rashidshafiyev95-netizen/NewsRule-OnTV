@@ -16,6 +16,7 @@ import {
 import { NewsArticle } from '../types/news';
 import { speechAnchor } from '../services/speechAnchor';
 import { soundFx } from '../services/soundFx';
+import { AppLanguage, TRANSLATIONS, getLocalizedCategoryName } from '../services/i18n';
 
 interface ArticleDetailModalProps {
   article: NewsArticle | null;
@@ -24,6 +25,7 @@ interface ArticleDetailModalProps {
   isSpeaking: boolean;
   onToggleSpeech: () => void;
   profile: 'LEGACY_LITE' | 'MODERN_RICH';
+  language?: AppLanguage;
 }
 
 export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
@@ -33,7 +35,10 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
   isSpeaking,
   onToggleSpeech,
   profile,
+  language = 'en',
 }) => {
+  const t = TRANSLATIONS[language] || TRANSLATIONS.en;
+
   useEffect(() => {
     // Stop speech when closing modal
     if (!isOpen) {
@@ -44,6 +49,7 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
   if (!isOpen || !article) return null;
 
   const isLegacy = profile === 'LEGACY_LITE';
+  const localizedCat = getLocalizedCategoryName(article.category, language);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-black/90 backdrop-blur-md select-none animate-in fade-in duration-150">
@@ -66,13 +72,13 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
               autoFocus
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back [Esc]</span>
+              <span>{t.backToMenu} [Esc]</span>
             </button>
             <div className="flex items-center gap-2 text-xs font-mono">
               <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
                 CH {article.channelNumber}
               </span>
-              <span className="text-zinc-400">{article.category}</span>
+              <span className="text-zinc-400">{localizedCat}</span>
               <span className="text-zinc-600">•</span>
               <span className="text-zinc-400">{article.timestamp}</span>
             </div>
@@ -91,7 +97,7 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
               }`}
             >
               {isSpeaking ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              <span>{isSpeaking ? 'Reading Aloud...' : 'Read Aloud [P]'}</span>
+              <span>{isSpeaking ? t.readingAloud : t.readAloud}</span>
             </button>
 
             <button
@@ -114,7 +120,7 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
             <div className="flex items-center gap-2 mb-2.5">
               {article.isBreaking && (
                 <span className="px-2.5 py-0.5 rounded bg-red-600 text-white font-extrabold text-[11px] uppercase tracking-wider animate-pulse">
-                  Breaking News
+                  {t.categories.breaking}
                 </span>
               )}
               <span className="text-xs font-mono text-zinc-400">
@@ -130,13 +136,17 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
           </div>
 
           {/* AI-Generated Summaries Section (Protected under NewsRule Terms) */}
-          <div className={`p-4 sm:p-5 rounded-xl border-l-4 border-amber-500 ${
-            isLegacy ? 'bg-zinc-900 border-zinc-800' : 'bg-gradient-to-r from-amber-950/30 to-zinc-900/40 border-y border-r border-amber-500/20'
-          }`}>
+          <div
+            className={`p-4 sm:p-5 rounded-xl border-l-4 border-amber-500 ${
+              isLegacy
+                ? 'bg-zinc-900 border-zinc-800'
+                : 'bg-gradient-to-r from-amber-950/30 to-zinc-900/40 border-y border-r border-amber-500/20'
+            }`}
+          >
             <div className="flex items-center justify-between mb-3">
               <span className="flex items-center gap-1.5 text-xs font-bold text-amber-400 uppercase tracking-wider font-mono">
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                AI Key Takeaways (Exclusive Synthesis)
+                {t.rulesBasedTakeaways}
               </span>
               <span className="text-[10px] text-zinc-500 font-mono flex items-center gap-1">
                 <Lock className="w-3 h-3 text-emerald-400" /> Protected
@@ -171,6 +181,9 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
 
           {/* Full Report Text - Extra large TV readable typography */}
           <div className="space-y-4 text-base sm:text-lg text-zinc-300 leading-relaxed font-sans">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-amber-400 border-b border-zinc-800 pb-2">
+              {t.detailedReport}
+            </h3>
             {article.fullContent.split('\n\n').map((paragraph, index) => (
               <p key={index} className="leading-relaxed">
                 {paragraph}
@@ -178,22 +191,13 @@ export const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({
             ))}
           </div>
 
-          {/* Tags & Proprietary Footer Banner */}
-          <div className="pt-6 border-t border-zinc-800 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-400">
-            <div className="flex items-center gap-2 flex-wrap">
-              {article.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 font-mono text-xs"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-            <div className="flex items-center gap-1.5 text-amber-400/90 font-mono text-[11px]">
-              <Lock className="w-3.5 h-3.5" />
-              <span>Proprietary Content & Anti-Copying Policy Enforced</span>
-            </div>
+          {/* Proprietary Content Notice matching terms */}
+          <div className="pt-4 border-t border-zinc-800 flex items-center justify-between text-xs font-mono text-zinc-500">
+            <span className="flex items-center gap-1">
+              <Lock className="w-3.5 h-3.5 text-amber-500" />
+              NewsRule Proprietary News Network
+            </span>
+            <span>All rights reserved</span>
           </div>
         </div>
       </div>

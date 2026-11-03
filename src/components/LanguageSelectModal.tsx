@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Globe, Check, X } from 'lucide-react';
-import { AppLanguage, saveAppLanguage } from '../services/i18n';
+import { AppLanguage, saveAppLanguage, TRANSLATIONS } from '../services/i18n';
 import { soundFx } from '../services/soundFx';
 
 interface LanguageSelectModalProps {
@@ -16,17 +16,62 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
   currentLanguage,
   onSelectLanguage,
 }) => {
-  const [focusedIndex, setFocusedIndex] = useState<number>(() => {
-    if (currentLanguage === 'en') return 0;
-    if (currentLanguage === 'az') return 1;
+  const getIndexForLang = (lang: AppLanguage) => {
+    if (lang === 'en') return 0;
+    if (lang === 'az') return 1;
     return 2;
-  });
+  };
 
-  const languages: { id: AppLanguage; label: string; desc: string; buttonId: string }[] = [
-    { id: 'en', label: 'English', desc: 'Default Global Broadcast', buttonId: 'btnLangEn' },
-    { id: 'az', label: 'Azərbaycan', desc: 'Ana dilində xəbərlər', buttonId: 'btnLangAz' },
-    { id: 'ru', label: 'Русский', desc: 'Для ТВ бабушки и дедушки', buttonId: 'btnLangRu' },
+  const [focusedIndex, setFocusedIndex] = useState<number>(() => getIndexForLang(currentLanguage));
+
+  const languages: {
+    id: AppLanguage;
+    label: string;
+    desc: string;
+    buttonId: string;
+    numKey: string;
+    badge?: string;
+  }[] = [
+    {
+      id: 'en',
+      label: 'English',
+      desc: TRANSLATIONS[currentLanguage].langDescEn,
+      buttonId: 'btnLangEn',
+      numKey: '1',
+    },
+    {
+      id: 'az',
+      label: 'Azərbaycan',
+      desc: TRANSLATIONS[currentLanguage].langDescAz,
+      buttonId: 'btnLangAz',
+      numKey: '2',
+    },
+    {
+      id: 'ru',
+      label: 'Русский',
+      desc: TRANSLATIONS[currentLanguage].langDescRu,
+      buttonId: 'btnLangRu',
+      numKey: '3',
+      badge: 'Для ТВ бабушки',
+    },
   ];
+
+  // Sync focused index when modal opens or language changes
+  useEffect(() => {
+    if (isOpen) {
+      setFocusedIndex(getIndexForLang(currentLanguage));
+    }
+  }, [isOpen, currentLanguage]);
+
+  const applyLanguage = useCallback(
+    (lang: AppLanguage) => {
+      soundFx.playSelect();
+      saveAppLanguage(lang);
+      onSelectLanguage(lang);
+      onClose();
+    },
+    [onSelectLanguage, onClose]
+  );
 
   // TV Remote D-Pad Navigation inside Modal
   useEffect(() => {
@@ -43,13 +88,19 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
         setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        soundFx.playSelect();
         const chosen = languages[focusedIndex];
         if (chosen) {
-          saveAppLanguage(chosen.id);
-          onSelectLanguage(chosen.id);
-          onClose();
+          applyLanguage(chosen.id);
         }
+      } else if (e.key === '1') {
+        e.preventDefault();
+        applyLanguage('en');
+      } else if (e.key === '2') {
+        e.preventDefault();
+        applyLanguage('az');
+      } else if (e.key === '3') {
+        e.preventDefault();
+        applyLanguage('ru');
       } else if (e.key === 'Escape' || e.key === 'Backspace') {
         e.preventDefault();
         soundFx.playBack();
@@ -59,18 +110,18 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, focusedIndex, onSelectLanguage, onClose]);
+  }, [isOpen, focusedIndex, applyLanguage, onClose, languages]);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-150">
-      {/* Container: LinearLayout background="#111111" padding="24dp" */}
+      {/* Container: LinearLayout background="#111111" padding="24px" */}
       <div
         className="w-full max-w-md rounded-2xl border-2 border-zinc-700 shadow-2xl flex flex-col select-none"
         style={{
           backgroundColor: '#111111',
-          padding: '24dp',
+          padding: '24px',
         }}
       >
         {/* Header: TextView textSize="20sp" textColor="#FFFFFF" textStyle="bold" */}
@@ -87,7 +138,7 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
                 Select Language / Dil Seçimi / Выберите язык
               </h2>
               <p className="text-[11px] text-zinc-400 font-mono mt-0.5">
-                Android TV System Localization
+                Android TV System Localization (Locale.getDefault)
               </p>
             </div>
           </div>
@@ -96,7 +147,7 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
               soundFx.playBack();
               onClose();
             }}
-            className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white"
+            className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -113,43 +164,59 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
               <button
                 key={item.id}
                 id={item.buttonId}
-                onClick={() => {
-                  soundFx.playSelect();
-                  saveAppLanguage(item.id);
-                  onSelectLanguage(item.id);
-                  onClose();
-                }}
+                onClick={() => applyLanguage(item.id)}
                 onMouseEnter={() => setFocusedIndex(idx)}
-                className={`w-full text-left p-3.5 rounded-xl border flex items-center justify-between transition-none ${
+                className={`w-full text-left p-3.5 rounded-xl border flex items-center justify-between transition-all ${
                   isFocused
                     ? 'tv-item-selector state-focused bg-white text-black border-white shadow-xl scale-[1.01]'
                     : isSelected
-                    ? 'bg-zinc-800 text-amber-400 border-amber-500/50'
+                    ? 'bg-zinc-800 text-amber-400 border-amber-500/60 ring-1 ring-amber-500/30'
                     : 'bg-zinc-900/80 text-zinc-300 border-zinc-800 hover:border-zinc-700'
                 }`}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-base">{item.label}</span>
-                    {item.id === 'ru' && (
-                      <span className={`text-[10px] px-1.5 py-0.2 rounded font-sans ${isFocused ? 'bg-zinc-800 text-white' : 'bg-zinc-800 text-zinc-400'}`}>
-                        ТВ Бабушки
+                    <span className="font-bold text-base flex items-center gap-2">
+                      <span
+                        className={`text-xs px-1.5 py-0.5 rounded font-mono ${
+                          isFocused ? 'bg-zinc-900 text-white' : 'bg-zinc-800 text-zinc-400'
+                        }`}
+                      >
+                        [{item.numKey}]
+                      </span>
+                      {item.label}
+                    </span>
+                    {item.badge && (
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded font-sans font-bold ${
+                          isFocused
+                            ? 'bg-zinc-900 text-amber-300'
+                            : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                        }`}
+                      >
+                        {item.badge}
                       </span>
                     )}
                   </div>
-                  <p className={`text-xs ${isFocused ? 'text-zinc-800 font-medium' : 'text-zinc-500'}`}>
+                  <p
+                    className={`text-xs mt-0.5 ${
+                      isFocused ? 'text-zinc-800 font-medium' : 'text-zinc-400'
+                    }`}
+                  >
                     {item.desc}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   {isSelected && (
                     <span className="flex items-center gap-1 text-xs font-bold">
-                      <Check className={`w-4 h-4 ${isFocused ? 'text-black' : 'text-emerald-400'}`} />
+                      <Check
+                        className={`w-4 h-4 ${isFocused ? 'text-black' : 'text-emerald-400'}`}
+                      />
                     </span>
                   )}
                   {isFocused && (
-                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${isFocused ? 'bg-black text-white' : 'bg-white text-black'}`}>
+                    <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-black text-white">
                       [OK]
                     </span>
                   )}
@@ -160,9 +227,9 @@ export const LanguageSelectModal: React.FC<LanguageSelectModalProps> = ({
         </div>
 
         {/* Footer Hint */}
-        <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-          <span>[▲/▼] Navigate</span>
-          <span>[OK] Apply Language</span>
+        <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px] font-mono text-zinc-400">
+          <span>[▲/▼] Navigate • [1/2/3] Quick Pick</span>
+          <span>[OK] Apply</span>
         </div>
       </div>
     </div>

@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { Star, CheckCircle, X, Shield, Sparkles } from 'lucide-react';
 import { soundFx } from '../services/soundFx';
+import { AppLanguage, TRANSLATIONS } from '../services/i18n';
 
 interface GooglePlayReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmitReview?: (stars: number, feedback: string) => void;
+  language?: AppLanguage;
 }
 
 export const GooglePlayReviewModal: React.FC<GooglePlayReviewModalProps> = ({
   isOpen,
   onClose,
   onSubmitReview,
+  language = 'en',
 }) => {
+  const t = TRANSLATIONS[language] || TRANSLATIONS.en;
   const [rating, setRating] = useState<number>(5);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
@@ -52,7 +56,7 @@ export const GooglePlayReviewModal: React.FC<GooglePlayReviewModalProps> = ({
                 Google Play TV Review
               </h3>
               <p className="text-[11px] text-zinc-400">
-                Official In-App Review Flow
+                ReviewManager (MainActivity.java)
               </p>
             </div>
           </div>
@@ -73,17 +77,19 @@ export const GooglePlayReviewModal: React.FC<GooglePlayReviewModalProps> = ({
             <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 mx-auto flex items-center justify-center">
               <CheckCircle className="w-8 h-8" />
             </div>
-            <h4 className="text-lg font-bold text-white">Thank You for Your Feedback!</h4>
+            <h4 className="text-lg font-bold text-white">
+              {language === 'ru' ? 'Спасибо за отзыв!' : language === 'az' ? 'Rəyiniz üçün təşəkkür edirik!' : 'Thank You for Your Feedback!'}
+            </h4>
             <p className="text-xs text-zinc-400">
-              Your rating has been registered to the Google Play Store for NewsRule TV.
+              {language === 'ru' ? 'Ваша оценка отправлена в Google Play для NewsRule TV.' : language === 'az' ? 'Qiymətiniz NewsRule TV üçün Google Play-ə qeyd olundu.' : 'Your rating has been registered to the Google Play Store for NewsRule TV.'}
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="text-center">
-              <h4 className="text-lg font-bold text-white">Enjoying NewsRule TV?</h4>
+              <h4 className="text-lg font-bold text-white">{t.playReviewTitle}</h4>
               <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                Tap the stars below to rate your experience on Android TV.
+                {t.playReviewSubtitle}
               </p>
             </div>
 
@@ -116,13 +122,13 @@ export const GooglePlayReviewModal: React.FC<GooglePlayReviewModalProps> = ({
             {/* Quick feedback tags */}
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px]">
               <span className="px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
-                ★ Fast on Old TVs
+                ★ {t.oldTvLite}
               </span>
               <span className="px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
-                ★ Crisp 4K Text
+                ★ {t.smartTv4k}
               </span>
               <span className="px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
-                ★ Accurate Weather
+                ★ {t.categories.weather}
               </span>
             </div>
 
@@ -135,13 +141,13 @@ export const GooglePlayReviewModal: React.FC<GooglePlayReviewModalProps> = ({
                 }}
                 className="flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold"
               >
-                Not Now [Esc]
+                {t.playReviewLater} [Esc]
               </button>
               <button
                 onClick={handleSubmit}
                 className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold shadow-lg shadow-emerald-500/20"
               >
-                Submit Review [OK]
+                {t.playReviewSubmit} [OK]
               </button>
             </div>
           </div>

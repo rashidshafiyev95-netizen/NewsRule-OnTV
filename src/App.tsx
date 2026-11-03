@@ -40,7 +40,7 @@ import {
 import { soundFx } from './services/soundFx';
 import { speechAnchor } from './services/speechAnchor';
 import { AIStudioClient } from './services/aiStudioClient';
-import { MOCK_NEWS_ARTICLES } from './data/mockNews';
+import { getMockArticlesForLanguage } from './data/mockNews';
 import { AppLanguage, getInitialAppLanguage, saveAppLanguage, TRANSLATIONS } from './services/i18n';
 import { SecurityShield } from './components/SecurityShield';
 import { TermsModal } from './components/TermsModal';
@@ -95,6 +95,8 @@ export default function App() {
     }
   });
 
+  const t = useMemo(() => TRANSLATIONS[currentLanguage] || TRANSLATIONS.en, [currentLanguage]);
+
   // 3. Navigation & Content State
   const [activeCategory, setActiveCategory] = useState<NewsCategory>('All');
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
@@ -105,13 +107,19 @@ export default function App() {
   const [newsByCat, setNewsByCat] = useState<Record<string, NewsArticle[]>>({});
   const [isFetchingAi, setIsFetchingAi] = useState<boolean>(false);
 
+  // Synchronize speechAnchor with active language
+  useEffect(() => {
+    speechAnchor.setLanguage(currentLanguage);
+  }, [currentLanguage]);
+
   // Fetch summarized news via AIStudioClient
   const fetchCategoryNews = useCallback(
-    (cat: NewsCategory, legacyMode: boolean) => {
+    (cat: NewsCategory, legacyMode: boolean, lang?: AppLanguage) => {
+      const activeLang = lang || currentLanguage;
       setIsFetchingAi(true);
-      AIStudioClient.fetchSummarizedNews(cat, legacyMode, {
+      AIStudioClient.fetchSummarizedNews(cat, legacyMode, activeLang, {
         onSuccess: (articles) => {
-          setNewsByCat((prev) => ({ ...prev, [cat]: articles }));
+          setNewsByCat((prev) => ({ ...prev, [`${cat}_${activeLang}`]: articles }));
           setIsFetchingAi(false);
         },
         onFailure: () => {
@@ -119,20 +127,22 @@ export default function App() {
         },
       });
     },
-    []
+    [currentLanguage]
   );
 
   useEffect(() => {
-    fetchCategoryNews(activeCategory, activeProfile === 'LEGACY_LITE');
-  }, [activeCategory, activeProfile, fetchCategoryNews]);
+    fetchCategoryNews(activeCategory, activeProfile === 'LEGACY_LITE', currentLanguage);
+  }, [activeCategory, activeProfile, currentLanguage, fetchCategoryNews]);
 
-  // Live filtered articles (prioritizes dynamic AI summaries, falls back to wire data)
+  // Live filtered articles (prioritizes dynamic AI summaries, falls back to localized wire data)
   const filteredArticles = useMemo(() => {
-    const fromAi = newsByCat[activeCategory];
+    const cacheKey = `${activeCategory}_${currentLanguage}`;
+    const fromAi = newsByCat[cacheKey];
     if (fromAi && fromAi.length > 0) return fromAi;
-    if (activeCategory === 'All') return MOCK_NEWS_ARTICLES;
-    return MOCK_NEWS_ARTICLES.filter((a) => a.category === activeCategory);
-  }, [activeCategory, newsByCat]);
+    const localizedPool = getMockArticlesForLanguage(currentLanguage);
+    if (activeCategory === 'All') return localizedPool;
+    return localizedPool.filter((a) => a.category === activeCategory);
+  }, [activeCategory, currentLanguage, newsByCat]);
 
   // Clock update for TV broadcast header
   useEffect(() => {
@@ -155,6 +165,17 @@ export default function App() {
     return unsub;
   }, []);
 
+  // Language change handler
+  const handleSelectLanguage = useCallback(
+    (lang: AppLanguage) => {
+      setCurrentLanguage(lang);
+      saveAppLanguage(lang);
+      speechAnchor.setLanguage(lang);
+      fetchCategoryNews(activeCategory, activeProfile === 'LEGACY_LITE', lang);
+    },
+    [activeCategory, activeProfile, fetchCategoryNews]
+  );
+
   // Handler to toggle profile mode (Legacy Lite vs Modern Rich)
   const handleToggleProfile = useCallback(() => {
     setProfileMode((prev) => {
@@ -162,7 +183,6 @@ export default function App() {
       if (prev === 'LEGACY') next = 'MODERN';
       else if (prev === 'MODERN') next = 'LEGACY';
       else {
-        // if AUTO, toggle to opposite of current detected
         next = activeProfile === 'LEGACY_LITE' ? 'MODERN' : 'LEGACY';
       }
       setManualProfileOverride(next);
@@ -199,19 +219,19 @@ export default function App() {
         speechAnchor.speakArticle(
           targetArticle.title,
           targetArticle.aiSummary,
-          targetArticle.fullContent
+          targetArticle.fullContent,
+          currentLanguage
         );
       }
     }
-  }, [isSpeaking, activeArticle, filteredArticles, focusedIndex]);
+  }, [isSpeaking, activeArticle, filteredArticles, focusedIndex, currentLanguage]);
 
   // TV D-Pad Navigation Handler
   const handleNavigate = useCallback(
     (direction: 'up' | 'down' | 'left' | 'right') => {
-      if (activeArticle) return; // Inside modal, handled by modal scrolling
+      if (activeArticle) return;
 
       if (activeProfile === 'LEGACY_LITE') {
-        // Android TV Split Screen Mode: 25% Left Navigation Menu & 75% Right Content Display Panel
         if (direction === 'left') {
           setFocusZone('menu');
         } else if (direction === 'right') {
@@ -263,11 +283,10 @@ export default function App() {
   );
 
   const handleSelectCurrent = useCallback(() => {
-    if (showTermsModal || showDiagnosticsModal || showSecurityModal) return;
+    if (showTermsModal || showDiagnosticsModal || showSecurityModal || showLanguageModal || showPlayReviewModal) return;
     if (activeArticle) return;
 
     if (activeProfile === 'LEGACY_LITE' && focusZone === 'menu') {
-      // Move from 25% Menu to 75% Content panel
       setFocusZone('content');
       return;
     }
@@ -278,7 +297,6 @@ export default function App() {
       setArticlesReadCount((prev) => {
         const next = prev + 1;
         if (next === 2) {
-          // Official Google Play Review Manager milestone trigger (MainActivity.java showGooglePlayReviewPopup)
           setTimeout(() => {
             setShowPlayReviewModal(true);
           }, 1500);
@@ -318,11 +336,9 @@ export default function App() {
       return;
     }
     if (activeProfile === 'LEGACY_LITE' && focusZone === 'content') {
-      // Step back from 75% Content Frame to 25% Navigation Menu
       setFocusZone('menu');
       return;
     }
-    // Return to first category if not already there
     if (activeCategory !== 'All') {
       setActiveCategory('All');
       setFocusedIndex(0);
@@ -332,7 +348,6 @@ export default function App() {
   // Global TV Remote Keyboard Listeners (Arrow keys, Enter, Backspace/Esc, Shortcuts)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is inside an input (none currently, but good practice)
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
       switch (e.key) {
@@ -369,14 +384,12 @@ export default function App() {
           break;
         case 't':
         case 'T':
-          // Toggle TV Mode (Legacy Lite / Modern Rich)
           e.preventDefault();
           soundFx.playToggleMode();
           handleToggleProfile();
           break;
         case 'w':
         case 'W':
-          // Jump to NewsRule Weather Assistant (Baku, Azerbaijan)
           e.preventDefault();
           soundFx.playSelect();
           setActiveCategory('Weather');
@@ -384,28 +397,25 @@ export default function App() {
           break;
         case 'p':
         case 'P':
-        case ' ': // Spacebar plays/stops Voice Anchor
+        case ' ':
           e.preventDefault();
           soundFx.playSelect();
           handleToggleSpeech();
           break;
         case 'x':
         case 'X':
-          // Toggle Retro Teletext mode
           e.preventDefault();
           soundFx.playSelect();
           setShowTeletext((prev) => !prev);
           break;
         case 's':
         case 'S':
-          // Toggle Terms & Security
           e.preventDefault();
           soundFx.playSelect();
           setShowTermsModal((prev) => !prev);
           break;
         case 'l':
         case 'L':
-          // Toggle Language Selection Dialog (res/layout/dialog_language_select.xml)
           e.preventDefault();
           soundFx.playSelect();
           setShowLanguageModal((prev) => !prev);
@@ -453,14 +463,14 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                  News<span className="text-amber-400">Rule</span>
+                  {t.appName.slice(0, 4)}<span className="text-amber-400">{t.appName.slice(4)}</span>
                 </span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-zinc-800 text-amber-300 border border-zinc-700">
                   TV NET
                 </span>
               </div>
               <p className="text-[10px] text-zinc-400 font-mono hidden sm:block">
-                Broadcast Edition • Auto-Adaptive Display Engine
+                {t.broadcastEdition}
               </p>
             </div>
           </div>
@@ -483,9 +493,9 @@ export default function App() {
           >
             <Tv className="w-4 h-4 text-amber-400" />
             <span className="hidden md:inline">
-              {profileMode === 'AUTO' ? 'AUTO: ' : 'FORCED: '}
+              {profileMode === 'AUTO' ? `${t.autoMode}: ` : `${t.forcedMode}: `}
             </span>
-            <span>{isLegacy ? 'OLD TV (LITE)' : 'SMART TV (4K)'}</span>
+            <span>{isLegacy ? t.oldTvLite : t.smartTv4k}</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-400 font-sans">
               [T]
             </span>
@@ -501,14 +511,14 @@ export default function App() {
             title="Android FLAG_SECURE & Anti-Copying Shield"
           >
             <ShieldCheck className="w-4 h-4" />
-            <span className="hidden lg:inline">FLAG_SECURE: ACTIVE</span>
+            <span className="hidden lg:inline">{t.flagSecureActive}</span>
           </button>
 
           {/* Live AI Summarizer Sync (AIStudioClient) */}
           <button
             onClick={() => {
               soundFx.playSelect();
-              fetchCategoryNews(activeCategory, isLegacy);
+              fetchCategoryNews(activeCategory, isLegacy, currentLanguage);
             }}
             className={`px-2.5 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition-colors ${
               isFetchingAi
@@ -518,7 +528,7 @@ export default function App() {
             title="Fetch Summarized News via AIStudioClient"
           >
             <Sparkles className={`w-3.5 h-3.5 ${isFetchingAi ? 'animate-spin text-amber-400' : 'text-purple-400'}`} />
-            <span className="hidden sm:inline">{isFetchingAi ? 'AI SUMMARIZING...' : 'AI WIRE: SYNCED'}</span>
+            <span className="hidden sm:inline">{isFetchingAi ? t.aiSummarizing : t.liveAiWire}</span>
           </button>
 
           {/* Quick Baku Weather Button (Channel 010) */}
@@ -531,7 +541,7 @@ export default function App() {
             className="hidden md:flex items-center transition-transform hover:scale-105 active:scale-95"
             title="Open NewsRule Weather Assistant (Baku, Azerbaijan) [W]"
           >
-            <WeatherDisplay isCompact={true} />
+            <WeatherDisplay isCompact={true} currentLanguage={currentLanguage} />
           </button>
 
           {/* Teletext Toggle */}
@@ -553,11 +563,11 @@ export default function App() {
               soundFx.playSelect();
               setShowLanguageModal(true);
             }}
-            className="px-2.5 py-1.5 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-zinc-200 text-xs font-mono flex items-center gap-1.5 transition-colors"
+            className="px-2.5 py-1.5 rounded-xl bg-zinc-900 border border-amber-500/50 hover:border-amber-400 text-amber-300 text-xs font-mono flex items-center gap-1.5 transition-colors shadow-sm"
             title="Select Language / Dil Seçimi / Выберите язык [L]"
           >
             <Globe className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="font-bold">{currentLanguage.toUpperCase()}</span>
+            <span className="font-bold uppercase tracking-wider">{currentLanguage}</span>
             <span className="text-[10px] px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 font-sans hidden md:inline">[L]</span>
           </button>
 
@@ -595,7 +605,6 @@ export default function App() {
 
       {/* Main TV Broadcast Stage */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8 flex flex-col">
-        {/* Hardware Status Banner if on Legacy Lite */}
         {isLegacy ? (
           <LegacyLiteView
             articles={filteredArticles}
@@ -610,6 +619,7 @@ export default function App() {
             categories={CATEGORIES}
             focusZone={focusZone}
             onSetFocusZone={(zone) => setFocusZone(zone)}
+            language={currentLanguage}
           />
         ) : (
           <ModernRichView
@@ -623,6 +633,7 @@ export default function App() {
               setFocusedIndex(0);
             }}
             categories={CATEGORIES}
+            language={currentLanguage}
           />
         )}
       </main>
@@ -633,32 +644,33 @@ export default function App() {
           {/* Breaking News Label */}
           <div className="bg-red-600 px-4 py-2 font-black text-white flex items-center gap-2 uppercase tracking-wider shrink-0 shadow-md">
             <Radio className="w-4 h-4 animate-pulse" />
-            <span>NEWS WIRE</span>
+            <span>{t.newsWire}</span>
           </div>
 
-          {/* Scrolling Ticker Line */}
+          {/* Scrolling Ticker Line with translated content */}
           <div className="flex-1 overflow-hidden py-2 px-3 whitespace-nowrap bg-zinc-900/90 text-zinc-300">
             <div className="inline-block animate-marquee hover:pause">
-              <span className="text-amber-400 font-bold mr-2">BREAKING:</span>
-              <span>Global Energy Summit ratifies Unified Grid Protocol 2030</span>
+              <span className="text-amber-400 font-bold mr-2">{t.tickerBreaking}</span>
+              <span>{t.tickerItems.breaking}</span>
               <span className="mx-4 text-zinc-600">■</span>
-              <span className="text-cyan-400 font-bold mr-2">TECH:</span>
-              <span>Silicon photonics chips shatter bandwidth benchmarks with 3.2 Tbps throughput</span>
+              <span className="text-cyan-400 font-bold mr-2">{t.tickerTech}</span>
+              <span>{t.tickerItems.tech}</span>
               <span className="mx-4 text-zinc-600">■</span>
-              <span className="text-emerald-400 font-bold mr-2">MARKETS:</span>
-              <span>Central bank liquidity adjustments bolster industrial manufacturing indices</span>
+              <span className="text-emerald-400 font-bold mr-2">{t.tickerMarkets}</span>
+              <span>{t.tickerItems.markets}</span>
               <span className="mx-4 text-zinc-600">■</span>
-              <span className="text-purple-400 font-bold mr-2">POLICY:</span>
-              <span>Proprietary Content & Anti-Copying Policy enforced under NewsRule terms</span>
+              <span className="text-purple-400 font-bold mr-2">{t.tickerPolicy}</span>
+              <span>{t.tickerItems.policy}</span>
             </div>
           </div>
 
-          {/* Remote Shortcut Helper Pill */}
-          <div className="hidden md:flex items-center gap-3 px-4 py-2 text-[11px] text-zinc-500 bg-zinc-950 border-l border-zinc-800 shrink-0">
-            <span>[▲/▼/◄/►] Navigate</span>
-            <span>[OK] Open</span>
-            <span>[T] Mode</span>
-            <span>[Esc] Back</span>
+          {/* Remote Shortcut Helper Pill with localized action terms */}
+          <div className="hidden md:flex items-center gap-3 px-4 py-2 text-[11px] text-zinc-400 bg-zinc-950 border-l border-zinc-800 shrink-0 font-mono">
+            <span>{t.navHints.navigate}</span>
+            <span>{t.navHints.open}</span>
+            <span>{t.navHints.mode}</span>
+            <span>{t.navHints.language}</span>
+            <span>{t.navHints.back}</span>
           </div>
         </div>
       </footer>
@@ -673,6 +685,7 @@ export default function App() {
         onOpenTerms={() => setShowTermsModal(true)}
         onOpenDiagnostics={() => setShowDiagnosticsModal(true)}
         onToggleSpeech={handleToggleSpeech}
+        onOpenLanguage={() => setShowLanguageModal(true)}
         onSelectWeather={() => {
           setActiveCategory('Weather');
           setFocusZone('content');
@@ -680,6 +693,7 @@ export default function App() {
         isSpeaking={isSpeaking}
         currentProfile={activeProfile}
         isTeletextOpen={showTeletext}
+        currentLanguage={currentLanguage}
       />
 
       {/* Article Detail Reader Modal */}
@@ -690,6 +704,7 @@ export default function App() {
         isSpeaking={isSpeaking}
         onToggleSpeech={handleToggleSpeech}
         profile={activeProfile}
+        language={currentLanguage}
       />
 
       {/* Retro Teletext / Ceefax View Modal */}
@@ -726,16 +741,14 @@ export default function App() {
         isOpen={showLanguageModal}
         onClose={() => setShowLanguageModal(false)}
         currentLanguage={currentLanguage}
-        onSelectLanguage={(lang) => {
-          setCurrentLanguage(lang);
-          soundFx.playSelect();
-        }}
+        onSelectLanguage={handleSelectLanguage}
       />
 
       {/* Google Play Review Flow Modal (MainActivity.java ReviewManager) */}
       <GooglePlayReviewModal
         isOpen={showPlayReviewModal}
         onClose={() => setShowPlayReviewModal(false)}
+        language={currentLanguage}
       />
     </div>
   );

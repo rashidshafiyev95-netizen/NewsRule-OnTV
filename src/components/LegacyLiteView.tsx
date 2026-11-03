@@ -14,6 +14,7 @@ import {
 import { NewsArticle, NewsCategory } from '../types/news';
 import { soundFx } from '../services/soundFx';
 import { WeatherDisplay } from './WeatherDisplay';
+import { AppLanguage, TRANSLATIONS, getLocalizedCategoryName } from '../services/i18n';
 
 interface LegacyLiteViewProps {
   articles: NewsArticle[];
@@ -25,6 +26,7 @@ interface LegacyLiteViewProps {
   categories: NewsCategory[];
   focusZone: 'menu' | 'content';
   onSetFocusZone: (zone: 'menu' | 'content') => void;
+  language?: AppLanguage;
 }
 
 export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
@@ -37,13 +39,15 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
   categories,
   focusZone,
   onSetFocusZone,
+  language = 'en',
 }) => {
+  const t = TRANSLATIONS[language] || TRANSLATIONS.en;
   const activeArticle = articles[focusedIndex] || articles[0];
 
   return (
     <div
       className="w-full flex-1 flex flex-col rounded-lg overflow-hidden border border-zinc-800"
-      style={{ backgroundColor: '#000000' }} // Pure black background saves energy on older panels
+      style={{ backgroundColor: '#000000' }}
     >
       {/* Top Telemetry Strip */}
       <div className="bg-black border-b border-zinc-800 px-4 py-2 flex items-center justify-between text-xs font-mono text-zinc-400">
@@ -53,7 +57,7 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
             Android TV Split Layout (25% Menu / 75% Content)
           </span>
           <span className="text-zinc-600">|</span>
-          <span className="text-amber-400">#000000 Pure Black Energy Saver</span>
+          <span className="text-amber-400">{t.pureBlackSaver}</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-emerald-400 flex items-center gap-1">
@@ -82,13 +86,13 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
               className="text-white font-bold tracking-tight text-2xl flex items-center justify-between"
               style={{ fontSize: '24px' }}
             >
-              <span>NewsRule</span>
+              <span>{t.appName}</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-amber-400 border border-zinc-700">
                 TV
               </span>
             </h1>
             <p className="text-[11px] text-zinc-400 font-mono mt-0.5">
-              Proprietary News Network
+              {t.tagline}
             </p>
           </div>
 
@@ -98,13 +102,14 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
             className="flex-1 space-y-1.5 overflow-y-auto pr-1"
           >
             <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-              <span>Categories</span>
+              <span>{t.channelsTitle}</span>
               <span className="text-zinc-400">[▲/▼]</span>
             </div>
 
             {categories.map((cat, idx) => {
               const isSelected = activeCategory === cat;
               const isFocusedCategory = focusZone === 'menu' && isSelected;
+              const localizedLabel = getLocalizedCategoryName(cat, language);
 
               return (
                 <button
@@ -125,7 +130,7 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
                 >
                   <span className="flex items-center gap-2">
                     <span className="text-xs opacity-60">#{idx + 1}</span>
-                    <span>{cat}</span>
+                    <span>{localizedLabel}</span>
                   </span>
                   {isSelected && (
                     <ArrowRight className={`w-3.5 h-3.5 ${isFocusedCategory ? 'text-black' : 'text-amber-400'}`} />
@@ -137,7 +142,7 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
 
           {/* D-Pad Navigation Hint for Left Menu */}
           <div className="mt-4 pt-3 border-t border-zinc-800 text-[11px] font-mono text-zinc-400 flex items-center justify-between">
-            <span>[►] Enter Content</span>
+            <span>[►] {t.navHints.navigate}</span>
             <span className="text-amber-400 font-bold">Menu Zone</span>
           </div>
         </div>
@@ -159,16 +164,16 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
                 className="text-zinc-300 font-medium"
                 style={{ fontSize: '18px', color: '#CCCCCC' }}
               >
-                Category: <strong className="text-white">{activeCategory}</strong> — Rules-based AI summaries
+                {t.channelsTitle}: <strong className="text-white">{getLocalizedCategoryName(activeCategory, language)}</strong> — {t.rulesBasedSummary}
               </p>
               <p className="text-xs text-zinc-400 font-mono mt-0.5">
-                {articles.length} verified news bulletins available in this broadcast stream
+                {articles.length} {t.channelHeadlines}
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono text-zinc-400 hidden sm:inline">
-                [◄] Back to Menu
+                [◄] {t.backToMenu}
               </span>
               <span className="px-2 py-1 rounded bg-zinc-900 text-amber-400 text-xs font-mono font-bold border border-zinc-800">
                 75% Content Frame
@@ -178,17 +183,20 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
 
           {/* Dynamic Content Loaded inside FrameLayout */}
           {activeCategory === 'Weather' ? (
-            <WeatherDisplay onBackToNews={() => onSelectCategory('All')} />
+            <WeatherDisplay
+              currentLanguage={language}
+              onBackToNews={() => onSelectCategory('All')}
+            />
           ) : articles.length === 0 ? (
             <div className="flex-1 flex items-center justify-center text-center p-8 text-zinc-400 font-mono text-base">
-              Select a category to view rules-based summaries.
+              {t.channelsTitle}
             </div>
           ) : (
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 overflow-y-auto">
               {/* Articles List Column (5 cols) */}
               <div className="lg:col-span-5 space-y-2.5 overflow-y-auto pr-1 max-h-[500px]">
                 <div className="text-xs font-mono text-zinc-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-                  <span>Channel Headlines</span>
+                  <span>{t.channelHeadlines}</span>
                   <span>[▲/▼]</span>
                 </div>
 
@@ -246,7 +254,7 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
                         </span>
                         {activeArticle.isBreaking && (
                           <span className="px-2 py-0.5 rounded bg-red-600 text-white font-bold">
-                            BREAKING
+                            {t.categories.breaking}
                           </span>
                         )}
                         <span className="text-zinc-400">{activeArticle.source}</span>
@@ -264,7 +272,7 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
                         <div className="flex items-center justify-between text-xs font-bold text-amber-400 font-mono mb-2 uppercase">
                           <span className="flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                            Rules-Based AI Summary:
+                            {t.rulesBasedTakeaways}
                           </span>
                           <span className="text-[10px] text-zinc-400">Exclusive</span>
                         </div>
@@ -288,7 +296,7 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
                     <div className="pt-3 border-t border-zinc-800 flex items-center justify-between">
                       <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-400">
                         <Lock className="w-3 h-3 text-emerald-400" />
-                        <span>Proprietary Content Policy</span>
+                        <span>{t.proprietaryPolicy}</span>
                       </div>
                       <button
                         onClick={() => {
@@ -297,14 +305,14 @@ export const LegacyLiteView: React.FC<LegacyLiteViewProps> = ({
                         }}
                         className="px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs uppercase tracking-wider font-mono flex items-center gap-1.5 transition-none"
                       >
-                        <span>Open In Full Reader</span>
+                        <span>{t.openInFullReader}</span>
                         <span className="bg-black/20 px-1 py-0.2 rounded text-[10px]">[OK]</span>
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-zinc-400 text-sm font-mono">
-                    Select an article to view AI summaries
+                    {t.rulesBasedSummary}
                   </div>
                 )}
               </div>
