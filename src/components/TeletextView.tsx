@@ -3,11 +3,14 @@ import { X, ChevronLeft, ChevronRight, Radio, Shield, Hash, ArrowLeft } from 'lu
 import { NewsArticle } from '../types/news';
 import { soundFx } from '../services/soundFx';
 
+import { AppLanguage, getLanguageMeta, getTranslations, getLocalizedCategoryName } from '../services/i18n';
+
 interface TeletextViewProps {
   isOpen: boolean;
   onClose: () => void;
   articles: NewsArticle[];
   onSelectArticle: (article: NewsArticle) => void;
+  language?: AppLanguage;
 }
 
 export const TeletextView: React.FC<TeletextViewProps> = ({
@@ -15,8 +18,11 @@ export const TeletextView: React.FC<TeletextViewProps> = ({
   onClose,
   articles,
   onSelectArticle,
+  language = 'en',
 }) => {
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
+  const langDir = getLanguageMeta(language).dir;
+  const t = getTranslations(language);
 
   if (!isOpen) return null;
 
@@ -43,10 +49,10 @@ export const TeletextView: React.FC<TeletextViewProps> = ({
             <span className="bg-cyan-400 text-black px-1.5 py-0.5">P{pageNumber}</span>
             <span>NEWSRULE-TXT</span>
             <span className="text-white">100</span>
-            <span className="text-green-400">CEEFAX/TV</span>
+            <span className="text-green-400">{t.teletextTitle}</span>
           </div>
           <div className="text-right text-yellow-400 font-bold flex items-center gap-4">
-            <span className="text-red-400 animate-pulse">● LIVE 24H</span>
+            <span className="text-red-400 animate-pulse">● {t.liveBroadcast}</span>
             <button
               onClick={() => {
                 soundFx.playBack();
@@ -54,38 +60,41 @@ export const TeletextView: React.FC<TeletextViewProps> = ({
               }}
               className="bg-red-600 text-white px-2 py-0.5 hover:bg-red-500 font-bold"
             >
-              EXIT TXT [Esc]
+              {t.close} [Esc]
             </button>
           </div>
         </div>
 
         {/* Teletext Subheader Banner */}
         <div className="bg-blue-900 text-white p-2 font-bold text-sm sm:text-base tracking-wider mb-4 flex items-center justify-between">
-          <span>NEWSRULE BROADCAST TEXT SERVICE • CHANNEL {activeArticle.channelNumber}</span>
-          <span className="text-yellow-300 text-xs">{activeArticle.category.toUpperCase()}</span>
+          <span>{t.teletextService} {activeArticle.channelNumber}</span>
+          <span className="text-yellow-300 text-xs">{getLocalizedCategoryName(activeArticle.category, language).toUpperCase()}</span>
         </div>
 
-        {/* Story Title in classic green */}
-        <div className="text-green-400 font-black text-lg sm:text-2xl leading-tight mb-4">
-          {activeArticle.title}
-        </div>
-
-        {/* AI Bullet Summaries in Cyan */}
-        <div className="space-y-2 mb-6 text-cyan-300 text-sm sm:text-base leading-relaxed">
-          <div className="text-white font-bold bg-zinc-900 px-2 py-1 inline-block mb-1">
-            &gt;&gt; AI SUMMARY BULLET POINTS (PROPRIETARY) &lt;&lt;
+        {/* Story Title & Content */}
+        <div dir={langDir}>
+          {/* Story Title in classic green */}
+          <div className="text-green-400 font-black text-lg sm:text-2xl leading-tight mb-4">
+            {activeArticle.title}
           </div>
-          {activeArticle.aiSummary.map((bullet, idx) => (
-            <div key={idx} className="flex items-start gap-2">
-              <span className="text-yellow-400 font-bold">#{idx + 1}</span>
-              <span className="text-zinc-100">{bullet}</span>
-            </div>
-          ))}
-        </div>
 
-        {/* Teletext Body Text in White */}
-        <div className="text-zinc-200 text-xs sm:text-sm leading-relaxed border-t border-zinc-800 pt-3 max-h-48 overflow-y-auto">
-          {activeArticle.fullContent}
+          {/* AI Bullet Summaries in Cyan */}
+          <div className="space-y-2 mb-6 text-cyan-300 text-sm sm:text-base leading-relaxed">
+            <div className="text-white font-bold bg-zinc-900 px-2 py-1 inline-block mb-1">
+              &gt;&gt; {t.teletextSummaryHeading} &lt;&lt;
+            </div>
+            {activeArticle.aiSummary.map((bullet, idx) => (
+              <div key={idx} className="flex items-start gap-2">
+                <span className="text-yellow-400 font-bold">#{idx + 1}</span>
+                <span className="text-zinc-100">{bullet}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Teletext Body Text in White */}
+          <div className="text-zinc-200 text-xs sm:text-sm leading-relaxed border-t border-zinc-800 pt-3 max-h-48 overflow-y-auto">
+            {activeArticle.fullContent}
+          </div>
         </div>
 
         {/* Teletext Fasttext Color Navigation Buttons (Red, Green, Yellow, Blue) */}
@@ -94,13 +103,13 @@ export const TeletextView: React.FC<TeletextViewProps> = ({
             onClick={prevPage}
             className="bg-red-600 text-white p-2 text-center hover:bg-red-700 active:scale-95"
           >
-            ◄ PREV PAGE [P{pageNumber > 101 ? pageNumber - 1 : 100 + articles.length}]
+            ◄ {t.teletextPrevPage} [P{pageNumber > 101 ? pageNumber - 1 : 100 + articles.length}]
           </button>
           <button
             onClick={nextPage}
             className="bg-green-600 text-white p-2 text-center hover:bg-green-700 active:scale-95"
           >
-            NEXT PAGE ► [P{pageNumber < 100 + articles.length ? pageNumber + 1 : 101}]
+            {t.teletextNextPage} ► [P{pageNumber < 100 + articles.length ? pageNumber + 1 : 101}]
           </button>
           <button
             onClick={() => {
@@ -110,7 +119,7 @@ export const TeletextView: React.FC<TeletextViewProps> = ({
             }}
             className="bg-yellow-400 text-black p-2 text-center hover:bg-yellow-500 active:scale-95"
           >
-            OPEN STORY [OK]
+            {t.teletextOpenStory} [OK]
           </button>
           <button
             onClick={() => {
@@ -119,13 +128,13 @@ export const TeletextView: React.FC<TeletextViewProps> = ({
             }}
             className="bg-blue-600 text-white p-2 text-center hover:bg-blue-700 active:scale-95"
           >
-            EXIT TO TV [Esc]
+            {t.teletextExit} [Esc]
           </button>
         </div>
 
         {/* Anti-copy Teletext Disclaimer */}
         <div className="mt-4 text-[10px] text-zinc-500 text-center tracking-widest uppercase">
-          NEWSRULE CEEFAX BROADCAST • PROTECTED UNDER TERMS OF SERVICE • NO DUPLICATION
+          {t.teletextDisclaimer}
         </div>
       </div>
     </div>

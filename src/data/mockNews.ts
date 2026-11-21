@@ -1,6 +1,13 @@
 import { NewsArticle } from '../types/news';
 import { AppLanguage } from '../services/i18n';
 
+// Local high-fidelity generated assets
+const IMG_ENERGY_HERO = '/src/assets/images/hero_global_energy_grid_1794487958839.jpg';
+const IMG_TECH_PHOTONICS = '/src/assets/images/tech_silicon_photonics_1794487958876.jpg';
+const IMG_MARKETS = '/src/assets/images/markets_stock_trading_1794487961178.jpg';
+const IMG_SCIENCE_OCEAN = '/src/assets/images/science_deep_ocean_1794487960917.jpg';
+const IMG_WEATHER_BAKU = '/src/assets/images/baku_caspian_boulevard_1794487961025.jpg';
+
 export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
   {
     id: 'nr-101',
@@ -12,7 +19,7 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
     timestamp: 'JUST IN',
     readTime: '3 min read',
     priorityScore: 99,
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_ENERGY_HERO,
     tags: ['Energy', 'Global Summit', 'Infrastructure'],
     aiSummary: [
       'Delegates from 64 nations ratified the Unified Grid Protocol 2030, establishing cross-border low-latency energy routing.',
@@ -31,7 +38,7 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
     timestamp: '18m ago',
     readTime: '4 min read',
     priorityScore: 92,
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_TECH_PHOTONICS,
     tags: ['Semiconductors', 'Photonics', 'AI Hardware'],
     aiSummary: [
       'Engineers have validated monolithic silicon photonic interconnects operating at 3.2 Terabits per second per socket.',
@@ -50,7 +57,7 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
     timestamp: '42m ago',
     readTime: '3 min read',
     priorityScore: 88,
-    imageUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_MARKETS,
     tags: ['Economics', 'Markets', 'Central Bank'],
     aiSummary: [
       'Coordinated regulatory statements confirmed an easing of reserve friction for capital-goods manufacturers.',
@@ -69,7 +76,7 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
     timestamp: '1h ago',
     readTime: '5 min read',
     priorityScore: 85,
-    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_SCIENCE_OCEAN,
     tags: ['Marine Biology', 'Exploration', 'Deep Sea'],
     aiSummary: [
       'Autonomous deep-submergence robotic platforms mapped previously uncharted hydrothermal vent spires reaching 40 meters high.',
@@ -88,7 +95,7 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
     timestamp: '2h ago',
     readTime: '3 min read',
     priorityScore: 83,
-    imageUrl: 'https://images.unsplash.com/photo-1517976487507-59a5e11d6869?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_ENERGY_HERO,
     tags: ['Space', 'Aerospace', 'Orbital'],
     aiSummary: [
       'Comprehensive static fire and structural avionics trials concluded successfully at the coastal launch facility.',
@@ -107,7 +114,7 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
     timestamp: '3h ago',
     readTime: '3 min read',
     priorityScore: 80,
-    imageUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_MARKETS,
     tags: ['Championship', 'Athletics', 'Victory'],
     aiSummary: [
       'A thrilling final quarter turnaround saw a 14-point deficit erased in the final seven minutes of play.',
@@ -119,21 +126,21 @@ export const MOCK_NEWS_ARTICLES_EN: NewsArticle[] = [
   {
     id: 'nr-710',
     channelNumber: 710,
-    title: 'International Film Archive Restores 1920s Masterpiece Using AI-Assisted Photochemical Reconstruction',
-    category: 'Entertainment',
+    title: 'Caspian Peninsula Meteorological Bureau Releases Summer Forecast & Urban Microclimate Model',
+    category: 'Weather',
     isBreaking: false,
-    source: 'NewsRule Arts & Culture',
+    source: 'NewsRule Caspian Bureau',
     timestamp: '4h ago',
     readTime: '4 min read',
     priorityScore: 75,
-    imageUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Cinema', 'Restoration', 'Archival Art'],
+    imageUrl: IMG_WEATHER_BAKU,
+    tags: ['Weather', 'Caspian', 'Climate'],
     aiSummary: [
-      'Severely decomposed nitrate negative reels were reconstructed frame-by-frame with neural emulsion correction models.',
-      'The audio score was meticulously re-recorded by a 60-piece philharmonic orchestra matching original 1926 sheet music.',
-      'World premiere of the 4K restored print is scheduled at the upcoming Venice Cinematheque Gala.'
+      'High-resolution atmospheric modeling indicates prevailing Khazri sea-breezes will temper continental heatwaves.',
+      'Coastal humidity gradients along Baku Bay will maintain optimal conditions for evening urban recreation.',
+      'Automated weather telemetry nodes along Absheron are now feeding real-time updates directly into NewsRule.'
     ],
-    fullContent: `BOLOGNA — Cinematic historians and archival preservationists have achieved a major restoration triumph, completing the painstaking resurrection of a silent era epic previously feared lost to nitrate decay.\n\nLeveraging specialized non-destructive scanning at 8K resolution, technicians utilized proprietary machine learning models to synthesize lost emulsion boundaries while preserving authentic film grain and optical lens characteristics. Missing inter-title cards discovered in private collectors’ vaults were translated and reintegrated according to the director’s original production ledger.\n\nThe completed restoration presents film scholars with an pristine, crystal-clear view into early twentieth-century visual storytelling.`
+    fullContent: `BAKU — Marine and atmospheric researchers along the Absheron Peninsula today deployed an expanded telemetry network monitoring microclimate trends across the Caspian maritime corridor.\n\nThe data shows that natural oceanic thermal inertia shields the metropolitan coastline from the extreme temperature swings common to inner desert zones. Wind velocity monitors along Baku Boulevard recorded steady northeasterly breezes averaging 18 km/h, providing continuous natural ventilation for urban promenades.\n\nNewsRule TV viewers can toggle channel 010 at any moment for localized updates on coastal weather and wardrobe guidance.`
   }
 ];
 
@@ -148,14 +155,14 @@ export const MOCK_NEWS_ARTICLES_RU: NewsArticle[] = [
     timestamp: 'СРОЧНО В ЭФИРЕ',
     readTime: '3 мин чтения',
     priorityScore: 99,
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_ENERGY_HERO,
     tags: ['Энергетика', 'Саммит', 'Инфраструктура'],
     aiSummary: [
       'Делегаты 64 стран ратифицировали Единый протокол сетей 2030 с минимальной задержкой маршрутизации энергии.',
       'Внедрение стандарта сократит коммерческие потери при передаче электроэнергии до 28% на континенте.',
       'Первый этап синхронизации инфраструктуры стартует в третьем квартале следующего года.'
     ],
-    fullContent: `ЖЕНЕВА — Представители 64 государств завершили напряжённые переговоры на Международном энергетическом форуме, подписав юридически обязывающий документ об универсальных стандартах возобновляемых микросетей.\n\nСоглашение, получившее название Единый сетевой протокол (UGP-30), вводит автоматическую балансировку частоты через распределённые кластеры хранения. Эксперты пленарной сессии подчеркнули, что стандарт устранит барьеры и позволит гибко перераспределять электроэнергию в часы пиковых нагрузок.\n\n«Сегодня создаётся кровеносная система энергетики двадцать первого века», — заявил докладчик на итоговой пресс-конференции. Пилотный запуск пройдёт в 12 высокопроизводительных транзитных коридорах.`
+    fullContent: `ЖЕНЕВА — Представители 64 государств завершили напряжённые переговоры на Международном энергетическом форуме, подписав юридически обязывающий документ об универсальных стандартах возобновляемых микросетей.\n\nСоглашение, получившее название Единый сетевой протокол (UGP-30), вводит автоматическую балансировку частоты через распределённые кластеры хранения. Эксперты пленарной сессии подчеркнули, что стандарт устранит барьеры и позволит гибко перераспределять электроэнергию в часы пиковых нагрузок.\n\n«Сегодня создаётся кровеносная система энергетики двадцать первого века», — заявил докладчик на итоговой пресс-конференции.`
   },
   {
     id: 'nr-204-ru',
@@ -167,14 +174,14 @@ export const MOCK_NEWS_ARTICLES_RU: NewsArticle[] = [
     timestamp: '18 мин назад',
     readTime: '4 мин чтения',
     priorityScore: 92,
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_TECH_PHOTONICS,
     tags: ['Полупроводники', 'Фотоника', 'ИИ-чипы'],
     aiSummary: [
       'Инженеры подтвердили скорость монолитных фотонных интерфейсов 3.2 Тбит/с на один сокет.',
       'Тепловыделение чипа снизилось на 74% по сравнению с медными проводниками при пиковой нагрузке.',
       'Производители ТВ-процессоров и серверов уже начали испытания образцов для потребительских устройств.'
     ],
-    fullContent: `САНТА-КЛАРА — Консорциум материаловедческих институтов и производителей полупроводников представил результаты тестов оптических трансиверов, созданных на стандартных 300-мм кремниевых линиях.\n\nНаправляя лазерные импульсы через микроскопические волноводы прямо на кристалле, архитектура обходит тепловые и емкостные ограничения традиционной электроники. При непрерывных 5000-часовых испытаниях фотонные кристаллы обеспечивали безупречную передачу данных с минимальным расходом энергии.\n\nОжидается, что разработка значительно повысит эффективность устройств — от дата-центров до компактных телеприставок и смарт-телевизоров.`
+    fullContent: `САНТА-КЛАРА — Консорциум материаловедческих институтов и производителей полупроводников представил результаты тестов оптических трансиверов, созданных на стандартных 300-мм кремниевых линиях.\n\nНаправляя лазерные импульсы через микроскопические волноводы прямо на кристалле, архитектура обходит тепловые ограничения электроники.`
   },
   {
     id: 'nr-305-ru',
@@ -186,14 +193,14 @@ export const MOCK_NEWS_ARTICLES_RU: NewsArticle[] = [
     timestamp: '42 мин назад',
     readTime: '3 мин чтения',
     priorityScore: 88,
-    imageUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_MARKETS,
     tags: ['Экономика', 'Рынки', 'Центробанк'],
     aiSummary: [
       'Согласованные заявления регуляторов снизили резервную нагрузку для промышленных производителей.',
       'Фондовые индексы в Токио, Франкфурте и Нью-Йорке отреагировали уверенным ростом котировок.',
       'Доходности краткосрочных облигаций стабилизировались в преддверии нового финансового квартала.'
     ],
-    fullContent: `НЬЮ-ЙОРК И ФРАНКФУРТ — Мировые биржевые индексы продемонстрировали заметный подъём после синхронных заявлений крупнейших центральных банков мира.\n\nКорректировка норм покрытия ликвидности направлена на поддержку инвестиций в тяжёлое автоматизированное производство и транспортное машиностроение. Объёмы торгов с утра выросли, а акции технологического и индустриального сектора возглавили список лидеров роста.\n\nАналитики отмечают, что решение свидетельствует об уверенности регуляторов в устойчивости международных цепочек поставок.`
+    fullContent: `НЬЮ-ЙОРК И ФРАНКФУРТ — Мировые биржевые индексы продемонстрировали заметный подъём после синхронных заявлений крупнейших центральных банков мира.\n\nКорректировка норм покрытия ликвидности направлена на поддержку инвестиций в тяжёлое автоматизированное производство.`
   },
   {
     id: 'nr-402-ru',
@@ -205,71 +212,33 @@ export const MOCK_NEWS_ARTICLES_RU: NewsArticle[] = [
     timestamp: '1 ч назад',
     readTime: '5 мин чтения',
     priorityScore: 85,
-    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Биология', 'Океан', 'Глубоководные исследования'],
+    imageUrl: IMG_SCIENCE_OCEAN,
+    tags: ['Биология', 'Океан', 'Наука'],
     aiSummary: [
       'Автономные роботы нанесли на карту ранее неизвестные гидротермальные шпили высотой до 40 метров.',
       'Генетический анализ проб воды выявил более 30 штаммов уникальных хемосинтетических микроорганизмов.',
       'Собранные массивы данных переданы в открытый международный геофизический репозиторий.'
     ],
-    fullContent: `ВЕЛЛИНГТОН — Работая на глубинах свыше 6200 метров, международная океанографическая группа описала масштабный кластер действующих геотермальных источников на тектоническом стыке Южно-Марианского хребта.\n\nАкустические эхолоты и высокоточная оптика подводных аппаратов зафиксировали процветающие сообщества живых организмов, полностью независимые от солнечного света. Организмы получают энергию за счёт хемосинтеза минеральных потоков при температуре до 340 градусов Цельсия.\n\nБиохимики экспедиции подчеркивают, что обнаруженные ферменты помогут изучить механизмы клеточной устойчивости к экстремальному давлению и температуре.`
-  },
-  {
-    id: 'nr-508-ru',
-    channelNumber: 508,
-    title: 'Космическое агентство одобрило запуск тяжелого грузового челнока к орбитальной станции',
-    category: 'Science',
-    isBreaking: false,
-    source: 'Аэрокосмический отдел NewsRule',
-    timestamp: '2 ч назад',
-    readTime: '3 мин чтения',
-    priorityScore: 83,
-    imageUrl: 'https://images.unsplash.com/photo-1517976487507-59a5e11d6869?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Космос', 'Орбита', 'Технологии'],
-    aiSummary: [
-      'Огневые испытания двигателей и проверка авионики на приморском космодроме завершены на отлично.',
-      'Челнок доставит 8.4 тонны полезной нагрузки, включая модули замкнутого жизнеобеспечения.',
-      'Автоматическая стыковка на орбите запланирована через 22 часа после старта ракеты.'
-    ],
-    fullContent: `МЫС КАНАВЕРАЛ — Центр управления полётами подтвердил успешное завершение всех проверок готовности тяжелого автономного грузового корабля к очередному орбитальному рейсу.\n\nАппарат доставит критически важное оборудование для расширения исследовательских возможностей орбитальной станции. В грузовом отсеке размещены кристаллизационные камеры для фармакологии и новейшие регенераторы атмосферы.\n\nМетеорологи дают свыше 90% вероятности благоприятной погоды в стартовое окно, инженеры приступили к заключительным операциям заправки баков.`
-  },
-  {
-    id: 'nr-609-ru',
-    channelNumber: 609,
-    title: 'Финал континентального кубка: фантастический камбэк приносит победу аутсайдерам',
-    category: 'Sports',
-    isBreaking: false,
-    source: 'Спортивная арена NewsRule',
-    timestamp: '3 ч назад',
-    readTime: '3 мин чтения',
-    priorityScore: 80,
-    imageUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Спорт', 'Финал', 'Победа'],
-    aiSummary: [
-      'В решающей четверти команда ликвидировала отставание в 14 очков за последние 7 минут матча.',
-      'Тактическая смена опеки и прессинг по всей площадке сломили фаворитов турнира.',
-      'Более 75 тысяч болельщиков на трибунах шумно праздновали первый в истории титул клуба.'
-    ],
-    fullContent: `МАДРИД — В одном из самых драматичных спортивных финалов последних лет аутсайдеры турнира продемонстрировали железную выдержку и завоевали заветный Континентальный кубок.\n\nУступая двузначное число очков в концовке встречи, главный тренер перешёл на зонный прессинг, что привело к череде быстрых перехватов. Победный бросок был забит за 4.2 секунды до сирены со средней дистанции с отскоком от щита.\n\n«Мы верили в командную дисциплину до последней секунды», — отметил самый ценный игрок финала во время церемонии награждения.`
+    fullContent: `ВЕЛЛИНГТОН — Работая на глубинах свыше 6200 метров, международная океанографическая группа описала масштабный кластер действующих геотермальных источников.`
   },
   {
     id: 'nr-710-ru',
     channelNumber: 710,
-    title: 'Международный киноархив завершил реставрацию шедевра немого кино 1920-х годов с помощью ИИ',
-    category: 'Entertainment',
+    title: 'Метеобюро Каспия представило сезонный прогноз погоды и карту ветров Апшерона',
+    category: 'Weather',
     isBreaking: false,
-    source: 'Культура NewsRule',
+    source: 'Каспийское бюро NewsRule',
     timestamp: '4 ч назад',
     readTime: '4 мин чтения',
     priorityScore: 75,
-    imageUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Кино', 'Реставрация', 'Культура'],
+    imageUrl: IMG_WEATHER_BAKU,
+    tags: ['Погода', 'Каспий', 'Баку'],
     aiSummary: [
-      'Повреждённые нитратные киноплёнки были покадрово восстановлены нейросетевыми моделями коррекции эмульсии.',
-      'Музыкальное сопровождение заново записано симфоническим оркестром по оригинальным партитурам 1926 года.',
-      'Мировая премьера отреставрированной 4K-версии состоится на открытии Венецианского кинофестиваля.'
+      'Атмосферное моделирование указывает на преобладание умеренного морского ветра Хазри.',
+      'Влажность вдоль Бакинской бухты обеспечит комфортные условия для вечерних прогулок.',
+      'Датчики на набережной Баку передают оперативную сводку в реальном времени в эфир NewsRule.'
     ],
-    fullContent: `БОЛОНЬЯ — Киноведы и специалисты по реставрации завершили многолетний труд по спасению шедевра эпохи немого кинематографа, ранее считавшегося практически утраченным.\n\nС помощью сканирования в разрешении 8K и нейросетевых фильтров удалось воссоздать утраченные фрагменты эмульсии, сохранив натуральное пленочное зерно и оптические свойства объективов той эпохи. Утерянные титры были восстановлены по архивным производственным записям режиссера.\n\nЗавершенная работа открывает зрителям кристально чистый взгляд на истоки мирового кинематографа.`
+    fullContent: `БАКУ — Метеорологи Апшеронского полуострова развернули комплекс автоматических датчиков вдоль Каспийской набережной для высокоточного мониторинга погоды.`
   }
 ];
 
@@ -284,14 +253,14 @@ export const MOCK_NEWS_ARTICLES_AZ: NewsArticle[] = [
     timestamp: 'CANLI XƏT',
     readTime: '3 dəq oxuma',
     priorityScore: 99,
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_ENERGY_HERO,
     tags: ['Enerji', 'Qlobal Sammit', 'İnfrastruktur'],
     aiSummary: [
       '64 ölkənin nümayəndələri Vahid Şəbəkə Protokolu 2030-u təsdiqləyərək aşağı gecikməli enerji ötürülməsini təmin etdilər.',
       'Tətbiqin böyük qitə şəbəkələrində kommersiya ötürmə itkilərini 28%-dək azaldacağı gözlənilir.',
       'İnfrastrukturun tam sinxronizasiyasının ilkin mərhələsi gələn ilin üçüncü rübünə planlaşdırılır.'
     ],
-    fullContent: `CENEVRƏ — 64 üzv ölkəni təmsil edən nümayəndə heyətləri Beynəlxalq Enerji Forumunda universal enerji standartları üzrə tarixi konsensus əldə etdilər.\n\nVahid Şəbəkə Protokolu (UGP-30) adlanan saziş mərkəzsizləşdirilmiş anbar klasterləri vasitəsilə avtomatik tezlik balanslaşdırmasını tələb edir. İclasda iştirak edən enerji analitikləri qeyd etdilər ki, bu standart pik saatlarda elektrik enerjisinin regionlararası səmərəli bölüşdürülməsinə yol açacaq.\n\n«Bu gün biz iyirmi birinci əsrin enerji paylanmasının rəqəmsal və fiziki qan dövranı sistemini qururuq», — deyə sammitin yekun mətbuat konfransında bildirildi.`
+    fullContent: `CENEVRƏ — 64 üzv ölkəni təmsil edən nümayəndə heyətləri Beynəlxalq Enerji Forumunda universal enerji standartları üzrə tarixi konsensus əldə etdilər.\n\nVahid Şəbəkə Protokolu (UGP-30) mərkəzsizləşdirilmiş anbar klasterləri vasitəsilə avtomatik tezlik balanslaşdırmasını tələb edir.`
   },
   {
     id: 'nr-204-az',
@@ -303,14 +272,14 @@ export const MOCK_NEWS_ARTICLES_AZ: NewsArticle[] = [
     timestamp: '18 dəq əvvəl',
     readTime: '4 dəq oxuma',
     priorityScore: 92,
-    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_TECH_PHOTONICS,
     tags: ['Yarımkeçiricilər', 'Fotonika', 'AI Prosessorlar'],
     aiSummary: [
       'Mühəndislər hər soket üzrə saniyədə 3.2 Terabit sürətlə işləyən monolitik silisium optik birləşmələri sınaqdan keçirdilər.',
       'İstilik ayrılması ənənəvi mis naqillərlə müqayisədə davamlı yük altında 74% azaldı.',
       'Server və Smart TV prosessor istehsalçıları yeni çipləri sınaqdan keçirməyə başlayıblar.'
     ],
-    fullContent: `SANTA KLARA — Materialşünaslıq institutları və yarımkeçirici zavodlarının konsorsiumu standart 300 mm CMOS xətlərində istehsal olunan optik ötürücülərin əməliyyat göstəricilərini açıqladı.\n\nLazer dalğalarını birbaşa mikroskopik silisium dalğaboyları ilə çip üzərindən yönləndirən yeni dizayn sıx hesablama klasterlərini ləngidən istilik və gecikmə problemlərini aradan qaldırır.\n\nBu texnologiyanın həm böyük məlumat mərkəzləri, həm də kompakt enerji qənaətli televizor prosessorları üçün mühüm irəliləyiş olacağı vurğulanır.`
+    fullContent: `SANTA KLARA — Materialşünaslıq institutları standart 300 mm CMOS xətlərində istehsal olunan optik ötürücülərin əməliyyat göstəricilərini açıqladı.`
   },
   {
     id: 'nr-305-az',
@@ -322,14 +291,14 @@ export const MOCK_NEWS_ARTICLES_AZ: NewsArticle[] = [
     timestamp: '42 dəq əvvəl',
     readTime: '3 dəq oxuma',
     priorityScore: 88,
-    imageUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_MARKETS,
     tags: ['İqtisadiyyat', 'Bazarlar', 'Mərkəzi Bank'],
     aiSummary: [
       'Tənzimləyici orqanlar sənaye istehsalçıları üçün ehtiyat tələblərini yüngülləşdirdi.',
       'Tokio, Frankfurt və Nyu-York birjalarında qərardan sonra müsbət dinamika müşahidə olundu.',
       'Qısamüddətli dövlət istiqrazlarının gəlirliliyi yeni rüb öncəsi sabitləşdi.'
     ],
-    fullContent: `NYU-YORK VƏ FRANKFURT — Qlobal qiymətli kağızlar indeksləri aparıcı mərkəzi bankların razılaşdırılmış pul-kredit siyasəti bəyanatlarından sonra yüksəliş qeydə aldı.\n\nQərarlar avtomatlaşdırılmış sənaye istehsalı və nəqliyyat sektoruna yönələn investisiyaları dəstəkləməyi hədəfləyir. Texnologiya və sənaye səhmləri ticarət həcmində liderlik etdi.`
+    fullContent: `NYU-YORK VƏ FRANKFURT — Qlobal qiymətli kağızlar indeksləri aparıcı mərkəzi bankların razılaşdırılmış pul-kredit siyasəti bəyanatlarından sonra yüksəliş qeydə aldı.`
   },
   {
     id: 'nr-402-az',
@@ -341,78 +310,521 @@ export const MOCK_NEWS_ARTICLES_AZ: NewsArticle[] = [
     timestamp: '1 saat əvvəl',
     readTime: '5 dəq oxuma',
     priorityScore: 85,
-    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: IMG_SCIENCE_OCEAN,
     tags: ['Dəniz Biologiyası', 'Kəşfiyyat', 'Dərin Dəniz'],
     aiSummary: [
       'Avtonom robot aparatlar 40 metr hündürlüyə çatan hidrotermal strukturları xəritələşdirdi.',
       'Su nümunələrinin ilkin genetik analizi 30-dan çox namizəd kemosintetik mikrob ştammı müəyyən etdi.',
       'Məlumatlar qlobal okeanoqrafik araşdırmalar üçün açıq elmi repozitoriyada saxlanılacaq.'
     ],
-    fullContent: `VELLİNQTON — 6200 metrdən çox dərinlikdə fəaliyyət göstərən beynəlxalq okeanoqrafiya gəmisi Cənubi Mariana silsiləsində fəal hidrotermal mineral strukturlar klasterini qeydə aldı.\n\nSualtı optik görüntülər günəş şüalarından tamamilə asılı olmayan zəngin ekosistemləri aşkar etdi. Canlılar 340 dərəcə istilikdə çıxan mineral axınların kemosintezi ilə qidalanır.`
-  },
-  {
-    id: 'nr-508-az',
-    channelNumber: 508,
-    title: 'Kosmik Agentlik Beynəlxalq Stansiyanı Təchiz Etmək Üçün Yük Gəmisinin Uçuşunu Təsdiqlədi',
-    category: 'Science',
-    isBreaking: false,
-    source: 'NewsRule Aerokosmik',
-    timestamp: '2 saat əvvəl',
-    readTime: '3 dəq oxuma',
-    priorityScore: 83,
-    imageUrl: 'https://images.unsplash.com/photo-1517976487507-59a5e11d6869?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Kosmos', 'Aerokosmik', 'Orbital'],
-    aiSummary: [
-      'Sahil buraxılış məntəqəsində mühərrik və avionika sınaqları uğurla başa çatdı.',
-      'Avtonom gəmi stansiyaya 8.4 ton elmi avadanlıq və həyat təminatı modulları çatdıracaq.',
-      'Orbitə çıxdıqdan 22 saat sonra avtomatik qovuşma və maqnit birləşməsi nəzərdə tutulub.'
-    ],
-    fullContent: `KAP KANAVERAL — Uçuş İdarəetmə Mərkəzi ağır avtonom logistika gəmisinin bütün uçuş hazırlığı sınaqlarını tamamladığını təsdiqlədi.\n\nGəmi aşağı Yer orbitindəki elmi laboratoriyalar üçün əvəzolunmaz hissələri və mikromaqnit mühitdə farmasevtik kristalların yetişdirilməsi üçün təcrübə kameralarını daşıyır.`
-  },
-  {
-    id: 'nr-609-az',
-    channelNumber: 609,
-    title: 'Çempionat Finalı: Əzəmətli Qələbə ilə Kubok Tarixi Sahibini Tapdı',
-    category: 'Sports',
-    isBreaking: false,
-    source: 'NewsRule İdman Meydanı',
-    timestamp: '3 saat əvvəl',
-    readTime: '3 dəq oxuma',
-    priorityScore: 80,
-    imageUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Çempionat', 'İdman', 'Qələbə'],
-    aiSummary: [
-      'Gərgin son hissədə komanda son 7 dəqiqədə 14 xallıq fərqi aradan qaldırdı.',
-      'Taktiki müdafiə dəyişikliyi turnirin favoritini təzyiq altında saxladı.',
-      'Stadiondakı 75 mindən çox azarkeş klubun ilk çempionluğunu təntənə ilə qeyd etdi.'
-    ],
-    fullContent: `MADRİD — Son illərin ən dramatik idman finallarından birində komanda əzmkar oyun nümayiş etdirərək Qitə Kubokunu başı üzərinə qaldırdı.\n\nQələbə topu oyunun bitməsinə cəmi 4.2 saniyə qalmış qeydə alındı. Mükafatlandırma mərasimində finalın ən dəyərli oyunçusu komanda intizamına inamın qələbə gətirdiyini vurğuladı.`
+    fullContent: `VELLİNQTON — 6200 metrdən çox dərinlikdə fəaliyyət göstərən beynəlxalq okeanoqrafiya gəmisi fəal hidrotermal mineral strukturları qeydə aldı.`
   },
   {
     id: 'nr-710-az',
     channelNumber: 710,
-    title: 'Beynəlxalq Film Arxivi 1920-ci İllərin Şah Əsərini Süni İntellektlə Bərpa Etdi',
-    category: 'Entertainment',
+    title: 'Xəzər Meteorologiya Mərkəzi Bakı və Abşeron üçün Hava Proqnozunu Təqdim Etdi',
+    category: 'Weather',
     isBreaking: false,
-    source: 'NewsRule Mədəniyyət',
+    source: 'NewsRule Xəzər Bürosu',
     timestamp: '4 saat əvvəl',
     readTime: '4 dəq oxuma',
     priorityScore: 75,
-    imageUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Kino', 'Bərpa', 'Mədəniyyət'],
+    imageUrl: IMG_WEATHER_BAKU,
+    tags: ['Hava', 'Xəzər', 'Bakı'],
     aiSummary: [
-      'Zədələnmiş lentlər neyron şəbəkə modelləri ilə kadrbə-kadr tam bərpa edildi.',
-      'Musiqi müşayiəti 1926-cı ilin orijinal notları əsasında 60 nəfərlik orkestr tərəfindən yenidən yazıldı.',
-      '4K bərpa edilmiş nüsxənin qlobal premyerası Venesiya Kino Qalasında keçiriləcək.'
+      'Atmosfer modelləşdirməsi mülayim Xəzri dəniz küləyinin üstünlük təşkil edəcəyini göstərir.',
+      'Bakı bulvarı boyu optimal rütubət axşam gəzintiləri üçün əlverişli şərait yaradır.',
+      'Dənizkənarı avtomatik sensorlar canlı telemetriya məlumatlarını NewsRule efirinə ötürür.'
     ],
-    fullContent: `BOLONYA — Kino tarixçiləri və arxiv mütəxəssisləri səssiz kino dövrünün şah əsərini qoruyub saxlamaq üçün böyük nailiyyət əldə etdilər.\n\n8K skanlama və maşın öyrənməsi modelləri orijinal kino dənəvərliyini və optik linza xüsusiyyətlərini qoruyaraq itirilmiş detalları canlandırdı.`
+    fullContent: `BAKI — Abşeron yarımadasında fəaliyyət göstərən meteoroloji stansiyalar Xəzər sahili boyu hava şəraitini real vaxt rejimində qeydə alır.`
+  }
+];
+
+export const MOCK_NEWS_ARTICLES_TR: NewsArticle[] = [
+  {
+    id: 'nr-101-tr',
+    channelNumber: 101,
+    title: 'Küresel Enerji Zirvesi Yeni Nesil Şebeke Standartlarında Tarihi Anlaşmaya Vardı',
+    category: 'Breaking',
+    isBreaking: true,
+    source: 'NewsRule Dünya Masası',
+    timestamp: 'SON DAKİKA',
+    readTime: '3 dk okuma',
+    priorityScore: 99,
+    imageUrl: IMG_ENERGY_HERO,
+    tags: ['Enerji', 'Zirve', 'Altyapı'],
+    aiSummary: [
+      '64 ülkenin delegeleri düşük gecikmeli sınır ötesi enerji yönlendirmesi sağlayan 2030 Birleşik Şebeke Protokolünü onayladı.',
+      'Uygulamanın kıtalararası büyük ağlarda ticari iletim kayıplarını %28’e kadar azaltması bekleniyor.',
+      'İlk altyapı senkronizasyon adımları gelecek yılın üçüncü çeyreğinde başlatılacak.'
+    ],
+    fullContent: `CENEVRE — Altmış dört üye ekonomiyi temsil eden delegeler, Uluslararası Enerji Forumu’nda dağıtık yenilenebilir mikro şebekeler için bağlayıcı evrensel standartlar üzerinde uzlaşmaya vardı.\n\nUGP-30 adı verilen anlaşma, enerji depolama kümeleri aracılığıyla otomatik frekans dengelemesi getiriyor.`
+  },
+  {
+    id: 'nr-204-tr',
+    channelNumber: 204,
+    title: 'Silikon Fotonik Devrimi: Yeni Nesil Çiplerde 10 Kat Bant Genişliği Artışı',
+    category: 'Tech & AI',
+    isBreaking: false,
+    source: 'NewsRule Teknoloji Bürosu',
+    timestamp: '18 dk önce',
+    readTime: '4 dk okuma',
+    priorityScore: 92,
+    imageUrl: IMG_TECH_PHOTONICS,
+    tags: ['Yarı İletkenler', 'Fotonik', 'Yapay Zekâ'],
+    aiSummary: [
+      'Mühendisler soket başına saniyede 3.2 Terabit hızında çalışan monolitik silikon fotonik bağlantıları doğruladı.',
+      'Isı dağılımı ölçümleri geleneksel bakır hatlara kıyasla %74 daha az ısınma gösterdi.',
+      'Sunucu ve Akıllı TV işlemci üreticileri yeni yongaları test etmeye başladı.'
+    ],
+    fullContent: `SANTA CLARA — Yarı iletken üreticileri konsorsiyumu, standart 300mm CMOS hatlarında üretilen optik alıcı-vericilerin performans verilerini paylaştı.`
+  },
+  {
+    id: 'nr-305-tr',
+    channelNumber: 305,
+    title: 'Merkez Bankaları Sanayi Büyümesi Eşliğinde Likidite Oranlarını Güncelledi',
+    category: 'Markets',
+    isBreaking: false,
+    source: 'NewsRule Ekonomi',
+    timestamp: '42 dk önce',
+    readTime: '3 dk okuma',
+    priorityScore: 88,
+    imageUrl: IMG_MARKETS,
+    tags: ['Ekonomi', 'Piyasalar', 'Merkez Bankası'],
+    aiSummary: [
+      'Eşgüdümlü düzenleyici açıklamalar sermaye malı üreticileri için rezerv yükünü hafifletti.',
+      'Tokyo, Frankfurt ve New York borsaları açıklamanın ardından pozitif ivme kazandı.',
+      'Kısa vadeli devlet tahvili getirileri yeni mali çeyrek öncesinde dengelendi.'
+    ],
+    fullContent: `NEW YORK & FRANKFURT — Dünyanın önde gelen merkez bankalarının eş zamanlı para politikası açıklamalarının ardından küresel borsalar yükseldi.`
+  },
+  {
+    id: 'nr-402-tr',
+    channelNumber: 402,
+    title: 'Derin Deniz Keşfi Güney Çukuru’nda Geniş Bir Hidrotermal Ekosistem Ortaya Çıkardı',
+    category: 'Science',
+    isBreaking: false,
+    source: 'NewsRule Bilim Masası',
+    timestamp: '1 sa önce',
+    readTime: '5 dk okuma',
+    priorityScore: 85,
+    imageUrl: IMG_SCIENCE_OCEAN,
+    tags: ['Deniz Biyolojisi', 'Keşif', 'Bilim'],
+    aiSummary: [
+      'Otonom derin dalış robotları 40 metre yüksekliğe ulaşan yeni hidrotermal bacaları haritaladı.',
+      'Su örneklerinden yapılan genetik dizilemede 30’dan fazla kemosentetik mikroorganizma türü saptandı.',
+      'Veriler küresel oşinografi araştırmaları için açık bilimsel arşive eklendi.'
+    ],
+    fullContent: `WELLINGTON — 6.200 metreyi aşan derinliklerde çalışan uluslararası araştırma gemisi, Güney Mariana Sırtı boyunca aktif hidrotermal yapılar keşfetti.`
+  }
+];
+
+export const MOCK_NEWS_ARTICLES_ES: NewsArticle[] = [
+  {
+    id: 'nr-101-es',
+    channelNumber: 101,
+    title: 'La Cumbre Energética Global Alcanza Acuerdo Histórico sobre Redes de Nueva Generación',
+    category: 'Breaking',
+    isBreaking: true,
+    source: 'Mesa Mundial NewsRule',
+    timestamp: 'ÚLTIMA HORA',
+    readTime: '3 min',
+    priorityScore: 99,
+    imageUrl: IMG_ENERGY_HERO,
+    tags: ['Energía', 'Cumbre', 'Infraestructura'],
+    aiSummary: [
+      'Delegados de 64 naciones ratificaron el Protocolo de Red Unificada 2030 para enrutamiento energético de baja latencia.',
+      'Se proyecta que la implementación reduzca las pérdidas de transmisión comercial hasta en un 28%.',
+      'Los primeros hitos de sincronización de infraestructura comenzarán el tercer trimestre del próximo año.'
+    ],
+    fullContent: `GINEBRA — Delegados de sesenta y cuatro economías concluyeron negociaciones maratónicas en el Foro Internacional de Energía, estableciendo estándares universales para microrredes renovables distribuidas.`
+  },
+  {
+    id: 'nr-204-es',
+    channelNumber: 204,
+    title: 'Avance en Fotónica de Silicio Multiplica por 10 el Ancho de Banda con Eficiencia Submilivatio',
+    category: 'Tech & AI',
+    isBreaking: false,
+    source: 'Buró Técnico NewsRule',
+    timestamp: 'Hace 18m',
+    readTime: '4 min',
+    priorityScore: 92,
+    imageUrl: IMG_TECH_PHOTONICS,
+    tags: ['Semiconductores', 'Fotónica', 'IA'],
+    aiSummary: [
+      'Los ingenieros validaron interconexiones fotónicas monolíticas operando a 3.2 Terabits por segundo por zócalo.',
+      'La disipación térmica mostró una reducción del 74% frente al cableado tradicional de cobre.',
+      'Los fabricantes de televisores inteligentes y servidores ya prueban los nuevos procesadores.'
+    ],
+    fullContent: `SANTA CLARA — Un consorcio de institutos de ciencia de materiales presentó telemetría operativa de transceptores ópticos monolíticos fabricados en líneas estándar CMOS de 300 mm.`
+  },
+  {
+    id: 'nr-305-es',
+    channelNumber: 305,
+    title: 'Bancos Centrales Ajustan Ratios de Liquidez Ante la Expansión Récord Manufacturera',
+    category: 'Markets',
+    isBreaking: false,
+    source: 'Noticias Financieras NewsRule',
+    timestamp: 'Hace 42m',
+    readTime: '3 min',
+    priorityScore: 88,
+    imageUrl: IMG_MARKETS,
+    tags: ['Economía', 'Mercados', 'Banca'],
+    aiSummary: [
+      'Declaraciones coordinadas confirmaron una flexibilización de reservas para fabricantes de bienes de capital.',
+      'Las bolsas de Tokio, Fráncfort y Nueva York registraron ganancias tras el anuncio.',
+      'Los rendimientos soberanos a corto plazo se estabilizaron de cara al próximo trimestre fiscal.'
+    ],
+    fullContent: `NUEVA YORK Y FRÁNCFORT — Los índices bursátiles globales registraron alzas moderadas tras las declaraciones sincronizadas de política monetaria.`
+  },
+  {
+    id: 'nr-402-es',
+    channelNumber: 402,
+    title: 'Expedición de Mapeo Oceánico Descubre Extenso Ecosistema Hidrotermal en Fosa Austral',
+    category: 'Science',
+    isBreaking: false,
+    source: 'Mesa Científica NewsRule',
+    timestamp: 'Hace 1h',
+    readTime: '5 min',
+    priorityScore: 85,
+    imageUrl: IMG_SCIENCE_OCEAN,
+    tags: ['Biología Marina', 'Exploración', 'Ciencia'],
+    aiSummary: [
+      'Vehículos robóticos autónomos cartografiaron chimeneas hidrotermales de hasta 40 metros de altura.',
+      'La secuenciación genómica inicial identificó más de 30 cepas microbianas quimiosintéticas.',
+      'Los datos serán archivados en el repositorio abierto de Geofísica Marina.'
+    ],
+    fullContent: `WELLINGTON — Operando a más de 6.200 metros de profundidad, un buque oceanográfico catalogó un vasto conjunto de estructuras minerales hidrotermales activas.`
+  }
+];
+
+export const MOCK_NEWS_ARTICLES_FR: NewsArticle[] = [
+  {
+    id: 'nr-101-fr',
+    channelNumber: 101,
+    title: 'Le Sommet Mondial de l’Énergie Conclut un Accord Historique sur les Réseaux de Demain',
+    category: 'Breaking',
+    isBreaking: true,
+    source: 'Rédaction Monde NewsRule',
+    timestamp: 'À L’INSTANT',
+    readTime: '3 min',
+    priorityScore: 99,
+    imageUrl: IMG_ENERGY_HERO,
+    tags: ['Énergie', 'Sommet', 'Infrastructure'],
+    aiSummary: [
+      'Les délégués de 64 nations ont ratifié le Protocole de Réseau Unifié 2030 à faible latence.',
+      'La mise en œuvre devrait réduire les pertes de transmission commerciale jusqu’à 28%.',
+      'Les premières étapes de synchronisation des infrastructures débuteront au troisième trimestre.'
+    ],
+    fullContent: `GENÈVE — Les représentants de soixante-quatre économies ont conclu des négociations décisives au Forum International de l’Énergie sur les micro-réseaux renouvelables distribués.`
+  },
+  {
+    id: 'nr-204-fr',
+    channelNumber: 204,
+    title: 'La Photonique sur Silicium Multiplie par 10 la Bande Passante avec une Efficacité Record',
+    category: 'Tech & AI',
+    isBreaking: false,
+    source: 'Bureau Tech NewsRule',
+    timestamp: 'Il y a 18m',
+    readTime: '4 min',
+    priorityScore: 92,
+    imageUrl: IMG_TECH_PHOTONICS,
+    tags: ['Semi-conducteurs', 'Photonique', 'IA'],
+    aiSummary: [
+      'Les ingénieurs ont validé des interconnexions photoniques fonctionnant à 3,2 Térabits par seconde.',
+      'La dissipation thermique a diminué de 74% par rapport aux pistes de cuivre traditionnelles.',
+      'Les fabricants de processeurs TV et serveurs testent déjà les premiers prototypes.'
+    ],
+    fullContent: `SANTA CLARA — Un consortium d’instituts de matériaux a dévoilé les performances d’émetteurs-récepteurs optiques fabriqués sur lignes CMOS standard de 300 mm.`
+  },
+  {
+    id: 'nr-305-fr',
+    channelNumber: 305,
+    title: 'Les Banques Centrales Ajustent les Ratios de Liquidité Face à l’Essor Industriel',
+    category: 'Markets',
+    isBreaking: false,
+    source: 'Finance NewsRule',
+    timestamp: 'Il y a 42m',
+    readTime: '3 min',
+    priorityScore: 88,
+    imageUrl: IMG_MARKETS,
+    tags: ['Économie', 'Marchés', 'Banque'],
+    aiSummary: [
+      'Des déclarations coordonnées confirment un assouplissement des réserves pour les industriels.',
+      'Les places boursières de Tokyo, Francfort et New York affichent une progression solide.',
+      'Les courbes de rendement souverain à court terme se sont stabilisées.'
+    ],
+    fullContent: `NEW YORK & FRANCFORT — Les indices boursiers mondiaux ont enregistré des gains modérés suite aux déclarations synchronisées des principales banques centrales.`
+  },
+  {
+    id: 'nr-402-fr',
+    channelNumber: 402,
+    title: 'Une Expédition Sous-Marine Découvre un Vaste Écosystème Hydrothermal dans la Fosse Australe',
+    category: 'Science',
+    isBreaking: false,
+    source: 'Pôle Science NewsRule',
+    timestamp: 'Il y a 1h',
+    readTime: '5 min',
+    priorityScore: 85,
+    imageUrl: IMG_SCIENCE_OCEAN,
+    tags: ['Océanographie', 'Exploration', 'Science'],
+    aiSummary: [
+      'Des robots autonomes ont cartographié des cheminées hydrothermales atteignant 40 mètres de hauteur.',
+      'Le séquençage génomique initial a identifié plus de 30 souches microbiennes chimiosynthétiques.',
+      'Les données seront archivées dans le dépôt public mondial de géophysique marine.'
+    ],
+    fullContent: `WELLINGTON — Opérant à plus de 6 200 mètres de profondeur, un navire océanographique international a répertorié un vaste complexe hydrothermal actif.`
+  }
+];
+
+export const MOCK_NEWS_ARTICLES_DE: NewsArticle[] = [
+  {
+    id: 'nr-101-de',
+    channelNumber: 101,
+    title: 'Welt-Energiegipfel Erzielt Historische Einigung über Netzstandards der Nächsten Generation',
+    category: 'Breaking',
+    isBreaking: true,
+    source: 'NewsRule Weltredaktion',
+    timestamp: 'EILMELDUNG',
+    readTime: '3 Min.',
+    priorityScore: 99,
+    imageUrl: IMG_ENERGY_HERO,
+    tags: ['Energie', 'Gipfel', 'Infrastruktur'],
+    aiSummary: [
+      'Delegierte aus 64 Nationen ratifizierten das Unified Grid Protocol 2030 für latenzarme Energieverteilung.',
+      'Die Umsetzung soll kommerzielle Übertragungsverluste in kontinentalen Netzen um bis zu 28% senken.',
+      'Erste Meilensteine zur Infrastruktursynchronisation starten im dritten Quartal des kommenden Jahres.'
+    ],
+    fullContent: `GENF — Delegierte aus vierundsechzig Mitgliedsstaaten haben auf dem Internationalen Energieforum verbindliche Standards für verteilte erneuerbare Mikronetze verabschiedet.`
+  },
+  {
+    id: 'nr-204-de',
+    channelNumber: 204,
+    title: 'Silizium-Photonik-Durchbruch Liefert 10-Fache Bandbreite bei Minimalem Stromverbrauch',
+    category: 'Tech & AI',
+    isBreaking: false,
+    source: 'NewsRule Tech-Büro',
+    timestamp: 'Vor 18 Min.',
+    readTime: '4 Min.',
+    priorityScore: 92,
+    imageUrl: IMG_TECH_PHOTONICS,
+    tags: ['Halbleiter', 'Photonik', 'KI-Hardware'],
+    aiSummary: [
+      'Ingenieure validierten monolithische Silizium-Photonik-Verbindungen mit 3,2 Terabit pro Sekunde.',
+      'Messungen zeigen 74% geringere Wärmeentwicklung im Vergleich zu herkömmlichen Kupferleitungen.',
+      'Führende TV- und Server-Chiphersteller testen bereits erste Evaluationsmuster.'
+    ],
+    fullContent: `SANTA CLARA — Ein Konsortium aus Materialforschungsinstituten präsentierte Leistungsdaten für optische Transceiver auf Basis standardmäßiger 300-mm-CMOS-Fertigung.`
+  },
+  {
+    id: 'nr-305-de',
+    channelNumber: 305,
+    title: 'Zentralbanken Passen Liquiditätsquoten Angesichts Starken Industriewachstums An',
+    category: 'Markets',
+    isBreaking: false,
+    source: 'NewsRule Finanzen',
+    timestamp: 'Vor 42 Min.',
+    readTime: '3 Min.',
+    priorityScore: 88,
+    imageUrl: IMG_MARKETS,
+    tags: ['Wirtschaft', 'Märkte', 'Zentralbank'],
+    aiSummary: [
+      'Koordinierte Erklärungen bestätigen eine Entlastung der Reservepflichten für Investitionsgüterhersteller.',
+      'Die Aktienmärkte in Tokio, Frankfurt und New York zeigten nach der Veröffentlichung deutliche Gewinne.',
+      'Kurzfristige Staatsanleiherenditen stabilisierten sich vor dem kommenden Quartal.'
+    ],
+    fullContent: `NEW YORK & FRANKFURT — Die globalen Aktienindizes verzeichneten nach abgestimmten geldpolitischen Erklärungen der führenden Notenbanken spürbare Zugewinne.`
+  },
+  {
+    id: 'nr-402-de',
+    channelNumber: 402,
+    title: 'Tiefsee-Kartierungsexpedition Entdeckt Ausgedehntes Hydrothermales Ökosystem',
+    category: 'Science',
+    isBreaking: false,
+    source: 'NewsRule Wissenschaft',
+    timestamp: 'Vor 1 Std.',
+    readTime: '5 Min.',
+    priorityScore: 85,
+    imageUrl: IMG_SCIENCE_OCEAN,
+    tags: ['Meeresbiologie', 'Forschung', 'Tiefsee'],
+    aiSummary: [
+      'Autonome Tiefseeroboter kartierten bis zu 40 Meter hohe hydrothermale Schlote.',
+      'Erste Genomanalysen identifizierten über 30 chemosynthetische Mikrobenstämme.',
+      'Alle Messdaten werden im offenen Marine-Geophysik-Archiv veröffentlicht.'
+    ],
+    fullContent: `WELLINGTON — In über 6.200 Metern Tiefe hat ein internationales Forschungsschiff ein weitläufiges Feld aktiver hydrothermaler Mineralstrukturen entdeckt.`
+  }
+];
+
+export const MOCK_NEWS_ARTICLES_AR: NewsArticle[] = [
+  {
+    id: 'nr-101-ar',
+    channelNumber: 101,
+    title: 'قمة الطاقة العالمية تتوصل إلى اتفاق تاريخي حول معايير شبكات الجيل القادم',
+    category: 'Breaking',
+    isBreaking: true,
+    source: 'مكتب NewsRule الدولي',
+    timestamp: 'عاجل',
+    readTime: '3 دقائق',
+    priorityScore: 99,
+    imageUrl: IMG_ENERGY_HERO,
+    tags: ['طاقة', 'قمة عالمية', 'بنية تحتية'],
+    aiSummary: [
+      'صادق مندوبون من 64 دولة على بروتوكول الشبكة الموحدة 2030 لتوجيه الطاقة بزمن استجابة منخفض.',
+      'من المتوقع أن يقلل التطبيق خسائر النقل التجاري بنسبة تصل إلى 28% عبر الشبكات القارية.',
+      'تنطلق المرحلة الأولى لمزامنة البنية التحتية في الربع الثالث من العام المقبل.'
+    ],
+    fullContent: `جنيف — اختتم مندوبو أربع وستين دولة مفاوضات مكثفة في منتدى الطاقة الدولي، متوصلين إلى توافق ملزم حول المعايير العالمية للشبكات المتجددة الموزعة.`
+  },
+  {
+    id: 'nr-204-ar',
+    channelNumber: 204,
+    title: 'اختراق في الفوتونيات السيليكونية يضاعف عرض النطاق الترددي 10 مرات بكفاءة فائقة',
+    category: 'Tech & AI',
+    isBreaking: false,
+    source: 'مكتب NewsRule التقني',
+    timestamp: 'منذ 18 د',
+    readTime: '4 دقائق',
+    priorityScore: 92,
+    imageUrl: IMG_TECH_PHOTONICS,
+    tags: ['أشباه الموصلات', 'فوتونيات', 'ذكاء اصطناعي'],
+    aiSummary: [
+      'أثبت المهندسون كفاءة وصلات فوتونية أحادية تعمل بسرعة 3.2 تيرابت في الثانية.',
+      'أظهرت القياسات الحرارية انخفاضاً بنسبة 74% مقارنة بوصلات النحاس التقليدية.',
+      'بدأت شركات تصنيع معالجات التلفاز الذكي والخوادم اختبار النماذج الأولية.'
+    ],
+    fullContent: `سانتا كلارا — كشف تحالف من معاهد علوم المواد ومصنعي الرقائق عن بيانات أداء أجهزة الإرسال والاستقبال البصرية المصنوعة على خطوط CMOS القياسية.`
+  },
+  {
+    id: 'nr-305-ar',
+    channelNumber: 305,
+    title: 'ائتلاف البنوك المركزية يعدل نسب السيولة وسط توسع صناعي قياسي',
+    category: 'Markets',
+    isBreaking: false,
+    source: 'أخبار NewsRule المالية',
+    timestamp: 'منذ 42 د',
+    readTime: '3 دقائق',
+    priorityScore: 88,
+    imageUrl: IMG_MARKETS,
+    tags: ['اقتصاد', 'أسواق', 'بنوك مركزية'],
+    aiSummary: [
+      'أكدت البيانات التنظيمية المنسقة تخفيف متطلبات الاحتياطي لمصنعي السلع الرأسمالية.',
+      'أظهرت أسواق الأسهم في طوكيو وفرانكفورت ونيويورك زخماً إيجابياً واسعاً.',
+      'استقرت منحنيات العائد السيادي قصيرة الأجل مع استعداد الأسواق للربع المالي القادم.'
+    ],
+    fullContent: `نيويورك وفرانكفورت — سجلت مؤشرات الأسهم العالمية مكاسب معتدلة عقب صدور بيانات متزامنة للسياسة النقدية من كبرى البنوك المركزية.`
+  },
+  {
+    id: 'nr-710-ar',
+    channelNumber: 710,
+    title: 'مكتب الأرصاد في بحر قزوين يصدر توقعات الطقس ونموذج المناخ الحضري لباكو',
+    category: 'Weather',
+    isBreaking: false,
+    source: 'مكتب قزوين NewsRule',
+    timestamp: 'منذ 4 س',
+    readTime: '4 دقائق',
+    priorityScore: 75,
+    imageUrl: IMG_WEATHER_BAKU,
+    tags: ['طقس', 'بحر قزوين', 'باكو'],
+    aiSummary: [
+      'تشير النمذجة الجوية عالية الدقة إلى استمرار نسيم خزري البحري المعتدل.',
+      'تحافظ مستويات الرطوبة على طول خليج باكو على أجواء مثالية للتنزه المسائي.',
+      'تنقل محطات القياس الآلية التحديثات الفورية مباشرة إلى شاشة NewsRule.'
+    ],
+    fullContent: `باكو — نشر باحثو الأرصاد الجوية في شبه جزيرة أبشيرون شبكة موسعة من المستشعرات لمتابعة المناخ المحلي على طول ساحل بحر قزوين.`
+  }
+];
+
+export const MOCK_NEWS_ARTICLES_ZH: NewsArticle[] = [
+  {
+    id: 'nr-101-zh',
+    channelNumber: 101,
+    title: '全球能源峰会就新一代电网标准达成历史性协议',
+    category: 'Breaking',
+    isBreaking: true,
+    source: 'NewsRule 国际部',
+    timestamp: '刚刚',
+    readTime: '3 分钟阅读',
+    priorityScore: 99,
+    imageUrl: IMG_ENERGY_HERO,
+    tags: ['能源', '全球峰会', '基础设施'],
+    aiSummary: [
+      '来自 64 个国家的代表批准了《2030 统一电网协议》，建立低延迟跨境能源调度机制。',
+      '预计该标准实施后将使跨大陆互联电网的商业传输损耗降低高达 28%。',
+      '首批基础设施同步里程碑将于明年第三季度正式启动部署。'
+    ],
+    fullContent: `日内瓦 — 来自 64 个成员经济体的代表在国际能源论坛结束了马拉松式谈判，就分布式可再生微电网及动态网间路由的通用标准达成了具有约束力的共识。`
+  },
+  {
+    id: 'nr-204-zh',
+    channelNumber: 204,
+    title: '硅光子技术取得突破：芯片带宽飙升 10 倍，功耗降至亚毫瓦级',
+    category: 'Tech & AI',
+    isBreaking: false,
+    source: 'NewsRule 科技局',
+    timestamp: '18 分钟前',
+    readTime: '4 分钟阅读',
+    priorityScore: 92,
+    imageUrl: IMG_TECH_PHOTONICS,
+    tags: ['半导体', '硅光子', 'AI 硬件'],
+    aiSummary: [
+      '工程师验证了单插槽吞吐量达每秒 3.2 太比特的单片硅光子互连架构。',
+      '在持续高负载下，热耗散相比传统铜线互连降低了 74%。',
+      '主要服务器及智能电视 SoC 厂商已开始测试下一代边缘计算评估芯片。'
+    ],
+    fullContent: `圣克拉拉 — 材料科学研究所与半导体晶圆厂组成的联盟公布了基于标准 300 毫米 CMOS 产线制造的单片光收发器基准测试遥测数据。`
+  },
+  {
+    id: 'nr-305-zh',
+    channelNumber: 305,
+    title: '主要央行联合调整流动性比率以配合制造业创纪录扩张',
+    category: 'Markets',
+    isBreaking: false,
+    source: 'NewsRule 财经频道',
+    timestamp: '42 分钟前',
+    readTime: '3 分钟阅读',
+    priorityScore: 88,
+    imageUrl: IMG_MARKETS,
+    tags: ['经济', '市场', '央行'],
+    aiSummary: [
+      '协调一致的监管声明确认放宽对资本货物制造商的准备金要求。',
+      '政策发布后，东京、法兰克福及纽约股市普遍走强。',
+      '随着市场调整下一财季预期，短期主权债券收益率曲线趋于平缓。'
+    ],
+    fullContent: `纽约与法兰克福 — 全球主要央行同步发布货币政策声明后，全球证券指数普遍录得稳健涨幅。`
+  },
+  {
+    id: 'nr-710-zh',
+    channelNumber: 710,
+    title: '里海气象局发布巴库夏季天气预报与滨海微气候监测模型',
+    category: 'Weather',
+    isBreaking: false,
+    source: 'NewsRule 里海气象站',
+    timestamp: '4 小时前',
+    readTime: '4 分钟阅读',
+    priorityScore: 75,
+    imageUrl: IMG_WEATHER_BAKU,
+    tags: ['天气', '里海', '巴库'],
+    aiSummary: [
+      '高分辨率大气模型显示，温和的哈兹里海风将有效缓和内陆热浪。',
+      '巴库湾沿线湿度适宜，为夜间滨海步道活动提供舒适环境。',
+      '阿布歇隆半岛自动气象遥测节点现已直接向 NewsRule 传输实时更新。'
+    ],
+    fullContent: `巴库 — 阿布歇隆半岛海洋与大气研究人员沿里海沿岸部署了扩展遥测网络，实时监测巴库海滨大道的风速与微气候变化。`
   }
 ];
 
 export const MOCK_NEWS_ARTICLES = MOCK_NEWS_ARTICLES_EN;
 
 export function getMockArticlesForLanguage(lang: AppLanguage): NewsArticle[] {
-  if (lang === 'ru') return MOCK_NEWS_ARTICLES_RU;
-  if (lang === 'az') return MOCK_NEWS_ARTICLES_AZ;
+  const normalized = lang.toLowerCase();
+  if (normalized === 'ru') return MOCK_NEWS_ARTICLES_RU;
+  if (normalized === 'az') return MOCK_NEWS_ARTICLES_AZ;
+  if (normalized === 'tr') return MOCK_NEWS_ARTICLES_TR;
+  if (normalized === 'es') return MOCK_NEWS_ARTICLES_ES;
+  if (normalized === 'fr') return MOCK_NEWS_ARTICLES_FR;
+  if (normalized === 'de') return MOCK_NEWS_ARTICLES_DE;
+  if (normalized === 'ar') return MOCK_NEWS_ARTICLES_AR;
+  if (normalized === 'zh') return MOCK_NEWS_ARTICLES_ZH;
   return MOCK_NEWS_ARTICLES_EN;
 }

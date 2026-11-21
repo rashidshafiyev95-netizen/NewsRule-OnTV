@@ -1,8 +1,8 @@
-import { AppLanguage, getInitialAppLanguage } from './i18n';
+import { AppLanguage, getInitialAppLanguage, getLanguageMeta, getTranslations } from './i18n';
 
 /**
  * Speech Synthesis TV News Anchor service.
- * Delivers broadcast audio reading of news articles and AI bullet points in English, Azerbaijani, and Russian.
+ * Delivers broadcast audio reading of news articles and AI bullet points across all 102 languages.
  */
 class SpeechAnchorService {
   private synth: SpeechSynthesis | null = null;
@@ -36,6 +36,21 @@ class SpeechAnchorService {
     this.listeners.forEach((cb) => cb(state));
   }
 
+  private buildLocalizedScript(
+    lang: AppLanguage,
+    title: string,
+    bulletPoints: string[],
+    fullContent?: string
+  ): string {
+    const t = getTranslations(lang);
+    const excerpt = fullContent ? fullContent.slice(0, 320) : '';
+    const bullets = bulletPoints.join('. ');
+
+    return `${t.appName} ${t.liveBroadcast}. ${title}. ${t.rulesBasedTakeaways} ${bullets}. ${
+      excerpt ? `${t.detailedReport}: ${excerpt}` : ''
+    }`;
+  }
+
   public speakArticle(
     title: string,
     bulletPoints: string[],
@@ -46,39 +61,35 @@ class SpeechAnchorService {
     this.stop();
 
     const activeLang = lang || this.currentLang;
-    let textToSpeak = '';
-
-    if (activeLang === 'ru') {
-      textToSpeak = `Эфир NewsRule. Главная новость: ${title}. Ключевые пункты: ${bulletPoints.join('. ')}. Подробный репортаж: ${fullContent ? fullContent.slice(0, 300) : ''}`;
-    } else if (activeLang === 'az') {
-      textToSpeak = `NewsRule Yayımı. Başlıq: ${title}. Əsas məqamlar: ${bulletPoints.join('. ')}. Ətraflı hesabat: ${fullContent ? fullContent.slice(0, 300) : ''}`;
-    } else {
-      textToSpeak = `NewsRule Broadcast. Headline: ${title}. Key takeaways: ${bulletPoints.join('. ')}. Detailed report: ${fullContent ? fullContent.slice(0, 300) : ''}`;
-    }
-
+    const textToSpeak = this.buildLocalizedScript(activeLang, title, bulletPoints, fullContent);
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
-    // Pick appropriate localized voice
     const voices = this.synth.getVoices();
-    let anchorVoice: SpeechSynthesisVoice | undefined;
+    const meta = getLanguageMeta(activeLang);
+    const baseCode = activeLang.split('-')[0].toLowerCase();
+    const speechTag = meta.speechLang.toLowerCase();
 
-    if (activeLang === 'ru') {
-      anchorVoice =
-        voices.find((v) => v.lang.startsWith('ru') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Yuri') || v.name.includes('Milena'))) ||
-        voices.find((v) => v.lang.startsWith('ru'));
-      utterance.lang = 'ru-RU';
-    } else if (activeLang === 'az') {
-      anchorVoice =
-        voices.find((v) => v.lang.startsWith('az')) ||
-        voices.find((v) => v.lang.startsWith('tr')); // Turkish is closely phonetically compatible fallback
-      utterance.lang = anchorVoice?.lang || 'az-AZ';
-    } else {
-      anchorVoice =
-        voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('News'))) ||
-        voices.find((v) => v.lang.startsWith('en'));
-      utterance.lang = 'en-US';
+    let anchorVoice =
+      voices.find(
+        (v) =>
+          (v.lang.toLowerCase() === speechTag || v.lang.toLowerCase().startsWith(baseCode)) &&
+          (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('News'))
+      ) ||
+      voices.find((v) => v.lang.toLowerCase() === speechTag) ||
+      voices.find((v) => v.lang.toLowerCase().startsWith(baseCode));
+
+    // Phonetic voice fallbacks for regional languages without preinstalled OS TTS voices
+    if (!anchorVoice) {
+      if (['az', 'tk', 'uz', 'kk', 'ky', 'ug'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('tr'));
+      } else if (['be', 'tg', 'mn'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ru'));
+      } else if (['ps', 'sd', 'ku'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ar') || v.lang.toLowerCase().startsWith('fa'));
+      }
     }
 
+    utterance.lang = anchorVoice?.lang || meta.speechLang;
     if (anchorVoice) {
       utterance.voice = anchorVoice;
     }

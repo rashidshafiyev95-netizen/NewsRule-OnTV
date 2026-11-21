@@ -10,6 +10,9 @@ interface HardwareDiagnosticsModalProps {
   currentMode: ProfileMode;
   onSelectMode: (mode: ProfileMode) => void;
   onRefreshMetrics: () => void;
+  screensaverTimeoutSec?: number;
+  onChangeScreensaverTimeout?: (sec: number) => void;
+  onLaunchScreensaver?: () => void;
 }
 
 export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> = ({
@@ -19,24 +22,27 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
   currentMode,
   onSelectMode,
   onRefreshMetrics,
+  screensaverTimeoutSec = 60,
+  onChangeScreensaverTimeout,
+  onLaunchScreensaver,
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-3xl bg-zinc-900 border-2 border-zinc-700 rounded-2xl shadow-2xl p-6 sm:p-8 text-zinc-100 max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 dark:bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-3xl bg-white dark:bg-zinc-900 border-2 border-zinc-900 dark:border-zinc-700 rounded-2xl shadow-2xl p-6 sm:p-8 text-zinc-950 dark:text-zinc-100 max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-5">
+        <div className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-800 pb-4 mb-5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            <div className="p-2.5 rounded-xl bg-cyan-500/15 border border-cyan-600/30 dark:border-cyan-500/30 text-cyan-800 dark:text-cyan-400">
               <Cpu className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
                 Hardware & RAM Detector
               </h2>
-              <p className="text-xs text-cyan-400 font-mono uppercase tracking-wider">
-                TV Hardware Classification Engine
+              <p className="text-xs text-cyan-800 dark:text-cyan-400 font-mono uppercase tracking-wider">
+                TV Hardware Classification & Display Protection
               </p>
             </div>
           </div>
@@ -46,7 +52,7 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
                 soundFx.playSelect();
                 onRefreshMetrics();
               }}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+              className="p-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors border border-zinc-300 dark:border-zinc-700"
               title="Re-probe Hardware"
               aria-label="Re-probe Hardware"
             >
@@ -57,7 +63,7 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
                 soundFx.playBack();
                 onClose();
               }}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+              className="p-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors border border-zinc-300 dark:border-zinc-700"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -69,63 +75,114 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
         <div className="flex-1 overflow-y-auto space-y-5 pr-1.5 text-sm">
           {/* Telemetry Metric Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
-                <HardDrive className="w-4 h-4 text-emerald-400" />
+            <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800">
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-xs mb-1">
+                <HardDrive className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                 <span>System RAM</span>
               </div>
-              <div className="text-2xl font-bold font-mono text-zinc-100">
+              <div className="text-2xl font-bold font-mono text-zinc-950 dark:text-zinc-100">
                 ~{metrics.totalRamGb} GB
               </div>
-              <span className={`text-[10px] font-mono ${metrics.totalRamGb < 3 ? 'text-amber-400' : 'text-emerald-400'}`}>
+              <span className={`text-[10px] font-mono ${metrics.totalRamGb < 3 ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
                 {metrics.totalRamGb < 3 ? 'Below 3GB Threshold' : 'Optimal Capacity'}
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
-                <Cpu className="w-4 h-4 text-cyan-400" />
+            <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800">
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-xs mb-1">
+                <Cpu className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
                 <span>CPU Logical Cores</span>
               </div>
-              <div className="text-2xl font-bold font-mono text-zinc-100">
+              <div className="text-2xl font-bold font-mono text-zinc-950 dark:text-zinc-100">
                 {metrics.cpuCores} Cores
               </div>
-              <span className={`text-[10px] font-mono ${metrics.cpuCores <= 4 ? 'text-amber-400' : 'text-emerald-400'}`}>
+              <span className={`text-[10px] font-mono ${metrics.cpuCores <= 4 ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
                 {metrics.cpuCores <= 4 ? 'Low/Mid SOC (<=4)' : 'Multi-Core SOC'}
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
-                <Monitor className="w-4 h-4 text-purple-400" />
+            <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800">
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-xs mb-1">
+                <Monitor className="w-4 h-4 text-purple-700 dark:text-purple-400" />
                 <span>Display Canvas</span>
               </div>
-              <div className="text-lg font-bold font-mono text-zinc-100 truncate">
+              <div className="text-lg font-bold font-mono text-zinc-950 dark:text-zinc-100 truncate">
                 {metrics.screenRes}
               </div>
-              <span className="text-[10px] font-mono text-zinc-500">
+              <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-500">
                 Aspect ratio native
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
-                <Zap className="w-4 h-4 text-amber-400" />
+            <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800">
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-xs mb-1">
+                <Zap className="w-4 h-4 text-amber-700 dark:text-amber-400" />
                 <span>Hardware Profile</span>
               </div>
-              <div className="text-sm font-bold font-mono text-amber-400 uppercase truncate">
+              <div className="text-sm font-bold font-mono text-amber-700 dark:text-amber-400 uppercase truncate">
                 {metrics.detectedProfile}
               </div>
-              <span className="text-[10px] font-mono text-zinc-400">
+              <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">
                 {metrics.isLowSpec ? 'Legacy TV Profile' : 'Modern 4K Profile'}
               </span>
             </div>
           </div>
 
+          {/* OLED / CRT Burn-In Screensaver Timeout Config */}
+          {onChangeScreensaverTimeout && (
+            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/80 border border-zinc-300 dark:border-zinc-800">
+              <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+                <div className="flex items-center gap-2 text-zinc-950 dark:text-zinc-200 font-semibold">
+                  <Monitor className="w-4 h-4 text-amber-700 dark:text-amber-400" />
+                  <span>OLED / Plasma Burn-In Screensaver (Pixel-Shift)</span>
+                </div>
+                {onLaunchScreensaver && (
+                  <button
+                    onClick={() => {
+                      soundFx.playSelect();
+                      onClose();
+                      onLaunchScreensaver();
+                    }}
+                    className="px-3 py-1 rounded-lg bg-zinc-950 text-white dark:bg-amber-400 dark:text-zinc-950 text-xs font-mono font-bold hover:opacity-90"
+                  >
+                    Preview Now [B]
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-5 gap-2 font-mono text-xs">
+                {[
+                  { label: '30s', val: 30 },
+                  { label: '60s', val: 60 },
+                  { label: '2m', val: 120 },
+                  { label: '5m', val: 300 },
+                  { label: 'Off', val: 0 },
+                ].map((opt) => {
+                  const active = screensaverTimeoutSec === opt.val;
+                  return (
+                    <button
+                      key={opt.val}
+                      onClick={() => {
+                        soundFx.playFocus();
+                        onChangeScreensaverTimeout(opt.val);
+                      }}
+                      className={`py-2 rounded-lg border font-bold transition-colors ${
+                        active
+                          ? 'bg-zinc-950 text-white border-zinc-950 dark:bg-amber-400 dark:text-zinc-950 dark:border-amber-400'
+                          : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-800 hover:border-zinc-500'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Profile Selector Controls */}
-          <div className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800">
-            <div className="flex items-center gap-2 text-zinc-200 font-semibold mb-3">
-              <SlidersHorizontal className="w-4 h-4 text-amber-400" />
+          <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/80 border border-zinc-300 dark:border-zinc-800">
+            <div className="flex items-center gap-2 text-zinc-950 dark:text-zinc-200 font-semibold mb-3">
+              <SlidersHorizontal className="w-4 h-4 text-amber-700 dark:text-amber-400" />
               <span>Television Experience Profile Override (SharedPreferences)</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -134,18 +191,18 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
                   soundFx.playToggleMode();
                   onSelectMode('AUTO');
                 }}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border-2 text-left transition-all ${
                   currentMode === 'AUTO'
-                    ? 'border-amber-500 bg-amber-500/10 text-white ring-1 ring-amber-500'
-                    : 'border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400'
+                    ? 'border-zinc-950 bg-white text-zinc-950 dark:border-amber-500 dark:bg-amber-500/10 dark:text-white'
+                    : 'border-zinc-300 bg-white/60 hover:bg-zinc-100 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-zinc-800 dark:text-zinc-400'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-bold text-xs uppercase tracking-wider">AUTO</span>
-                  {currentMode === 'AUTO' && <Check className="w-4 h-4 text-amber-400" />}
+                  {currentMode === 'AUTO' && <Check className="w-4 h-4 text-amber-700 dark:text-amber-400" />}
                 </div>
-                <p className="text-[11px] text-zinc-400 leading-tight">
-                  setManualProfileOverride(this, "AUTO") — auto-classifies from RAM (&lt;3GB) and cores.
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">
+                  setManualProfileOverride(this, &quot;AUTO&quot;) — auto-classifies from RAM (&lt;3GB) and cores.
                 </p>
               </button>
 
@@ -154,18 +211,18 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
                   soundFx.playToggleMode();
                   onSelectMode('LEGACY');
                 }}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border-2 text-left transition-all ${
                   currentMode === 'LEGACY'
-                    ? 'border-amber-500 bg-amber-500/10 text-white ring-1 ring-amber-500'
-                    : 'border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400'
+                    ? 'border-zinc-950 bg-white text-zinc-950 dark:border-amber-500 dark:bg-amber-500/10 dark:text-white'
+                    : 'border-zinc-300 bg-white/60 hover:bg-zinc-100 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-zinc-800 dark:text-zinc-400'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-bold text-xs uppercase tracking-wider">LEGACY (LITE)</span>
-                  {currentMode === 'LEGACY' && <Check className="w-4 h-4 text-amber-400" />}
+                  {currentMode === 'LEGACY' && <Check className="w-4 h-4 text-amber-700 dark:text-amber-400" />}
                 </div>
-                <p className="text-[11px] text-zinc-400 leading-tight">
-                  setManualProfileOverride(this, "LEGACY") — forces low-resource text layouts and zero animations.
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">
+                  setManualProfileOverride(this, &quot;LEGACY&quot;) — forces low-resource text layouts and zero animations.
                 </p>
               </button>
 
@@ -174,18 +231,18 @@ export const HardwareDiagnosticsModal: React.FC<HardwareDiagnosticsModalProps> =
                   soundFx.playToggleMode();
                   onSelectMode('MODERN');
                 }}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border-2 text-left transition-all ${
                   currentMode === 'MODERN'
-                    ? 'border-amber-500 bg-amber-500/10 text-white ring-1 ring-amber-500'
-                    : 'border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400'
+                    ? 'border-zinc-950 bg-white text-zinc-950 dark:border-amber-500 dark:bg-amber-500/10 dark:text-white'
+                    : 'border-zinc-300 bg-white/60 hover:bg-zinc-100 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-zinc-800 dark:text-zinc-400'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-bold text-xs uppercase tracking-wider">MODERN (RICH)</span>
-                  {currentMode === 'MODERN' && <Check className="w-4 h-4 text-amber-400" />}
+                  {currentMode === 'MODERN' && <Check className="w-4 h-4 text-amber-700 dark:text-amber-400" />}
                 </div>
-                <p className="text-[11px] text-zinc-400 leading-tight">
-                  setManualProfileOverride(this, "MODERN") — forces 4K animations, ambient glow, and video previews.
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-tight">
+                  setManualProfileOverride(this, &quot;MODERN&quot;) — forces 4K animations, ambient glow, and video previews.
                 </p>
               </button>
             </div>
@@ -481,16 +538,16 @@ public void showGooglePlayReviewPopup() {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-zinc-800 pt-4 mt-4 flex items-center justify-between">
-          <div className="text-xs text-zinc-500 font-mono">
-            Active Mode: <strong className="text-zinc-200">{currentMode}</strong>
+        <div className="border-t border-zinc-300 dark:border-zinc-800 pt-4 mt-4 flex items-center justify-between">
+          <div className="text-xs text-zinc-600 dark:text-zinc-500 font-mono">
+            Active Mode: <strong className="text-zinc-950 dark:text-zinc-200">{currentMode}</strong>
           </div>
           <button
             onClick={() => {
               soundFx.playBack();
               onClose();
             }}
-            className="px-5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold"
+            className="px-5 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 text-xs font-semibold"
           >
             Done [Esc]
           </button>

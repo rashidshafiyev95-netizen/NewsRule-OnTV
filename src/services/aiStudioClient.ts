@@ -1,21 +1,183 @@
 import { NewsArticle, NewsCategory } from '../types/news';
 import { getMockArticlesForLanguage } from '../data/mockNews';
-import { AppLanguage, getInitialAppLanguage } from './i18n';
+import {
+  AppLanguage,
+  Translations,
+  getInitialAppLanguage,
+  getLanguageMeta,
+  getTranslations,
+  hasTranslationsLoaded,
+  setDynamicTranslations,
+} from './i18n';
 
 interface RawGeneratedArticle {
+  id?: string;
+  channelNumber?: number;
+  category?: NewsCategory;
   title: string;
-  summary: string[] | string;
+  aiSummary?: string[];
+  summary?: string[] | string;
   source?: string;
+  timestamp?: string;
   readTime?: string;
   fullContent?: string;
   imageUrl?: string;
+  isBreaking?: boolean;
+  priorityScore?: number;
+  tags?: string[];
+}
+
+const WEATHER_FALLBACKS: Record<string, { temp: number; condition: string; summary: string[] }> = {
+  en: {
+    temp: 18,
+    condition: 'Caspian Breeze & Partly Cloudy',
+    summary: [
+      'Moderate Khazri wind gusting along Baku Boulevard with daytime highs around 18°C.',
+      'A light windbreaker or layered sweater is recommended for evening strolls near the seaside.',
+    ],
+  },
+  az: {
+    temp: 18,
+    condition: 'Xəzri Meh və Qismən Buludlu',
+    summary: [
+      'Bakı bulvarı boyunca mülayim Xəzri küləyi, gündüz temperatur təxminən 18°C.',
+      'Dənizkənarı axşam gəzintiləri üçün yüngül pencək və ya gödəkcə tövsiyə olunur.',
+    ],
+  },
+  ru: {
+    temp: 18,
+    condition: 'Каспийский бриз, переменная облачность',
+    summary: [
+      'Умеренный ветер Хазри вдоль Бакинского бульвара, дневная температура около 18°C.',
+      'Для вечерней прогулки по набережной рекомендуется ветровка или легкая куртка.',
+    ],
+  },
+  tr: {
+    temp: 18,
+    condition: 'Hazar Esintisi ve Parçalı Bulutlu',
+    summary: [
+      'Bakü Bulvarı boyunca orta şiddette Hazri rüzgarı, gündüz en yüksek sıcaklık yaklaşık 18°C.',
+      'Sahil boyunca akşam yürüyüşleri için ince bir rüzgarlık veya ceket önerilir.',
+    ],
+  },
+  es: {
+    temp: 18,
+    condition: 'Brisa del Caspio y Parcialmente Nublado',
+    summary: [
+      'Viento moderado Khazri en el Bulevar de Bakú con máximas diurnas cercanas a los 18°C.',
+      'Se recomienda una chaqueta ligera para los paseos nocturnos junto al mar.',
+    ],
+  },
+  fr: {
+    temp: 18,
+    condition: 'Brise Caspienne et Temps Peu Nuageux',
+    summary: [
+      'Vent modéré Khazri le long du boulevard de Bakou avec des maximales autour de 18°C.',
+      'Un coupe-vent léger est conseillé pour les promenades en soirée en bord de mer.',
+    ],
+  },
+  de: {
+    temp: 18,
+    condition: 'Kaspische Brise & Leicht Bewölkt',
+    summary: [
+      'Mäßiger Khazri-Wind am Baku Boulevard mit Tageshöchstwerten um 18°C.',
+      'Für abendliche Spaziergänge an der Küste wird eine leichte Windjacke empfohlen.',
+    ],
+  },
+  ar: {
+    temp: 18,
+    condition: 'نسيم بحر قزوين وغائم جزئياً',
+    summary: [
+      'رياح خزري معتدلة على طول بوليفارد باكو مع درجات حرارة نهارية تقارب 18 درجة مئوية.',
+      'يُوصى بارتداء سترة خفيفة للنزهات المسائية بالقرب من الواجهة البحرية.',
+    ],
+  },
+  zh: {
+    temp: 18,
+    condition: '里海微风，局部多云',
+    summary: [
+      '巴库海滨大道沿线吹拂温和的哈兹里风，日间最高气温约为 18°C。',
+      '傍晚在海滨散步建议穿着轻便防风外套。',
+    ],
+  },
+};
+
+const pendingUiBundles = new Map<string, Promise<Translations>>();
+const clientArticlesCache = new Map<string, NewsArticle[]>();
+const clientWeatherCache = new Map<
+  string,
+  { temp: number | string; condition: string; summary: string[] }
+>();
+
+const ARTICLES_STORAGE_PREFIX = 'newsrule_articles_v2_';
+
+function loadCachedArticles(key: string): NewsArticle[] | null {
+  if (clientArticlesCache.has(key)) {
+    return clientArticlesCache.get(key) || null;
+  }
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(`${ARTICLES_STORAGE_PREFIX}${key}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as NewsArticle[];
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      clientArticlesCache.set(key, parsed);
+      return parsed;
+    }
+  } catch {
+    // Ignore storage errors
+  }
+  return null;
+}
+
+function saveCachedArticles(key: string, articles: NewsArticle[]): void {
+  clientArticlesCache.set(key, articles);
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`${ARTICLES_STORAGE_PREFIX}${key}`, JSON.stringify(articles));
+  } catch {
+    // Ignore storage quota errors
+  }
 }
 
 /**
  * Port of com.newsrule.app.AIStudioClient to Web environment.
- * Dispatches summarized news requests adapted to hardware performance profile and active language.
+ * Dispatches 102-language UI bundles, summarized news, and weather briefs.
  */
 export class AIStudioClient {
+  public static async fetchUiTranslations(language: AppLanguage): Promise<Translations> {
+    if (hasTranslationsLoaded(language)) {
+      return getTranslations(language);
+    }
+
+    const existing = pendingUiBundles.get(language);
+    if (existing) return existing;
+
+    const langMeta = getLanguageMeta(language);
+    const task = (async () => {
+      try {
+        const res = await fetch(
+          `/api/i18n/bundle?lang=${encodeURIComponent(language)}&langName=${encodeURIComponent(
+            langMeta.englishName
+          )}&nativeLabel=${encodeURIComponent(langMeta.nativeLabel)}`
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data?.bundle) {
+          return setDynamicTranslations(language, data.bundle);
+        }
+      } catch (err) {
+        console.warn('UI bundle translation fallback:', err);
+      } finally {
+        pendingUiBundles.delete(language);
+      }
+      return getTranslations(language);
+    })();
+
+    pendingUiBundles.set(language, task);
+    return task;
+  }
+
   public static async fetchSummarizedNews(
     category: NewsCategory,
     isLegacy: boolean,
@@ -25,7 +187,16 @@ export class AIStudioClient {
       onFailure: (err: Error) => void;
     }
   ): Promise<void> {
+    const cacheKey = `${category}_${language}`;
+    const cached = loadCachedArticles(cacheKey);
+    if (cached && cached.length > 0) {
+      callback.onSuccess(cached.map((a) => ({ ...a, imageUrl: isLegacy ? '' : a.imageUrl })));
+      return;
+    }
+
     try {
+      const langMeta = getLanguageMeta(language);
+      const t = getTranslations(language);
       const response = await fetch('/api/news/summarize', {
         method: 'POST',
         headers: {
@@ -35,6 +206,8 @@ export class AIStudioClient {
           category,
           isLegacy,
           language,
+          languageName: langMeta.englishName,
+          nativeLabel: langMeta.nativeLabel,
         }),
       });
 
@@ -44,8 +217,7 @@ export class AIStudioClient {
 
       const data = await response.json();
 
-      if (data.fallback || !data.articles || data.articles.length === 0) {
-        // Fallback to high-availability localized wire cache filtered by category
+      if (data.fallback || !Array.isArray(data.articles) || data.articles.length === 0) {
         const localizedPool = getMockArticlesForLanguage(language);
         const fallbackList =
           category === 'All'
@@ -55,56 +227,39 @@ export class AIStudioClient {
         return;
       }
 
-      // Map generated response into standardized NewsArticle objects
       const mappedArticles: NewsArticle[] = data.articles.map(
         (item: RawGeneratedArticle, idx: number) => {
-          const summaries = Array.isArray(item.summary)
-            ? item.summary
-            : typeof item.summary === 'string'
-            ? [item.summary]
-            : [language === 'ru' ? 'Свежая проверенная сводка.' : language === 'az' ? 'Ən son təsdiqlənmiş bülleten.' : 'Latest verified intelligence bulletin.'];
-
-          const defaultSource =
-            language === 'ru'
-              ? 'Лента NewsRule'
-              : language === 'az'
-              ? 'NewsRule Xəbər Xətti'
-              : 'NewsRule AI Wire';
+          const rawSummary = item.aiSummary || item.summary;
+          const summaries = Array.isArray(rawSummary)
+            ? rawSummary
+            : typeof rawSummary === 'string'
+            ? [rawSummary]
+            : [t.rulesBasedSummary];
 
           return {
-            id: `ai-${language}-${Date.now()}-${idx}`,
-            channelNumber: 100 + (idx + 1) * 11,
-            title: item.title || (language === 'ru' ? 'Срочный выпуск новостей' : language === 'az' ? 'Təcili Xəbər Buraxılışı' : 'Breaking Intelligence Update'),
-            category: category === 'All' ? 'Breaking' : category,
+            id: item.id || `ai-${language}-${Date.now()}-${idx}`,
+            channelNumber: item.channelNumber || 100 + (idx + 1) * 11,
+            title: item.title || t.channelHeadlines,
+            category: item.category || (category === 'All' ? 'Breaking' : category),
             aiSummary: summaries.slice(0, 3),
-            fullContent:
-              item.fullContent ||
-              summaries.join(' ') +
-                (language === 'ru'
-                  ? ' Подробные редакторские репортажи транслируются через защищенную спутниковую сеть NewsRule.'
-                  : language === 'az'
-                  ? ' Ətraflı redaksiya xəbərləri NewsRule peyk şəbəkəsi vasitəsilə yayımlanır.'
-                  : ' Detailed editorial dispatches continue to stream over the NewsRule secure satellite network.'),
-            source: item.source || defaultSource,
-            timestamp: language === 'ru' ? 'ПРЯМОЙ ЭФИР' : language === 'az' ? 'CANLI YAYIM' : 'LIVE AI',
-            readTime: item.readTime || (language === 'ru' ? '2 мин' : language === 'az' ? '2 dəq' : '2 min read'),
-            imageUrl:
-              !isLegacy && item.imageUrl
-                ? item.imageUrl
-                : isLegacy
-                ? ''
-                : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
-            isBreaking: idx === 0,
-            priorityScore: 90 - idx * 5,
-            tags: [category, 'AI-Summarized', 'Proprietary'],
+            fullContent: item.fullContent || summaries.join('\n\n'),
+            source: item.source || `${t.appName}`,
+            timestamp: item.timestamp || t.liveBroadcast,
+            readTime: item.readTime || '3 min',
+            imageUrl: isLegacy
+              ? ''
+              : item.imageUrl || '/src/assets/images/hero_global_energy_grid_1794487958839.jpg',
+            isBreaking: typeof item.isBreaking === 'boolean' ? item.isBreaking : idx === 0,
+            priorityScore: item.priorityScore ?? 90 - idx * 5,
+            tags: Array.isArray(item.tags) ? item.tags : [category],
           };
         }
       );
 
+      saveCachedArticles(cacheKey, mappedArticles);
       callback.onSuccess(mappedArticles);
     } catch (err: unknown) {
       console.warn('AIStudioClient fetch error, using localized wire cache fallback:', err);
-      // Fallback gracefully so TV screen never goes blank
       const localizedPool = getMockArticlesForLanguage(language);
       const fallbackList =
         category === 'All'
@@ -116,52 +271,36 @@ export class AIStudioClient {
   }
 
   /**
-   * NewsRule Weather Assistant client for Baku, Azerbaijan with language parameter.
+   * NewsRule Weather Assistant client for Baku, Azerbaijan across all 102 languages.
    */
   public static async fetchBakuWeather(
     lang?: AppLanguage
   ): Promise<{ temp: number | string; condition: string; summary: string[] }> {
     const activeLang = lang || getInitialAppLanguage();
+    const cached = clientWeatherCache.get(activeLang);
+    if (cached) return cached;
+
+    const langMeta = getLanguageMeta(activeLang);
+    const fallback = WEATHER_FALLBACKS[activeLang] || WEATHER_FALLBACKS.en;
+
     try {
-      const res = await fetch(`/api/weather/baku?lang=${encodeURIComponent(activeLang)}`);
+      const res = await fetch(
+        `/api/weather/baku?lang=${encodeURIComponent(activeLang)}&langName=${encodeURIComponent(
+          langMeta.englishName
+        )}&nativeLabel=${encodeURIComponent(langMeta.nativeLabel)}`
+      );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      return {
-        temp: data.temp ?? 18,
-        condition: data.condition || (activeLang === 'ru' ? 'Каспийский бриз' : activeLang === 'az' ? 'Xəzri Mehi' : 'Caspian Breeze'),
-        summary: Array.isArray(data.summary)
-          ? data.summary
-          : [String(data.summary || (activeLang === 'ru' ? 'Ясная погода на Апшеронском полуострове.' : activeLang === 'az' ? 'Bakı yarımadasında mülayim hava.' : 'Fair weather across Baku peninsula.'))],
+      const result = {
+        temp: data.temp ?? fallback.temp,
+        condition: data.condition || fallback.condition,
+        summary: Array.isArray(data.summary) ? data.summary : fallback.summary,
       };
+      clientWeatherCache.set(activeLang, result);
+      return result;
     } catch (err) {
       console.warn('Weather fetch fallback:', err);
-      if (activeLang === 'ru') {
-        return {
-          temp: 18,
-          condition: 'Каспийский бриз, переменная облачность',
-          summary: [
-            'Умеренный ветер Хазри вдоль Бакинского бульвара, дневная температура около 18°C.',
-            'Для вечерней прогулки по набережной рекомендуется ветровка или легкая куртка.'
-          ]
-        };
-      } else if (activeLang === 'az') {
-        return {
-          temp: 18,
-          condition: 'Xəzri Meh və Qismən Buludlu',
-          summary: [
-            'Bakı bulvarı boyunca mülayim Xəzri küləyi, gündüz temperatur təxminən 18°C.',
-            'Dənizkənarı axşam gəzintiləri üçün yüngül pencək və ya gödəkcə tövsiyə olunur.'
-          ]
-        };
-      }
-      return {
-        temp: 18,
-        condition: 'Caspian Breeze & Partly Cloudy',
-        summary: [
-          'Moderate Khazri wind gusting along Baku Boulevard with daytime highs around 18°C.',
-          'A light windbreaker or layered sweater is recommended for evening strolls near the seaside.'
-        ]
-      };
+      return fallback;
     }
   }
 }

@@ -213,43 +213,43 @@ export const SecurityShield: React.FC<SecurityShieldProps> = ({
 
       {/* Hardware & Android FLAG_SECURE Architecture Modal */}
       {showDetailsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto text-zinc-100 shadow-2xl p-6 sm:p-8">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 dark:bg-black/80 backdrop-blur-md">
+          <div className="bg-white dark:bg-zinc-900 border-2 border-zinc-900 dark:border-zinc-700/80 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto text-zinc-950 dark:text-zinc-100 shadow-2xl p-6 sm:p-8">
+            <div className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-800 pb-4 mb-5">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-600/30 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                  <h3 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
                     NewsRule Security Architecture
                   </h3>
-                  <p className="text-xs text-zinc-400 font-mono">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 font-mono">
                     Multi-Layer Screen Recording & Piracy Protection
                   </p>
                 </div>
               </div>
               <button
                 onClick={onCloseDetailsModal}
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+                className="p-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors border border-zinc-300 dark:border-zinc-700"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-sm text-zinc-300 leading-relaxed">
-              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800/80">
+            <div className="space-y-4 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800/80">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 font-bold">
+                  <span className="text-xs font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5 font-bold">
                     <Terminal className="w-4 h-4" />
                     Native Android Implementation (FLAG_SECURE)
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-mono">
                     ACTIVE
                   </span>
                 </div>
-                <pre className="font-mono text-xs bg-zinc-900/90 text-zinc-200 p-3.5 rounded-lg overflow-x-auto border border-zinc-800">
+                <pre className="font-mono text-xs bg-zinc-900 text-zinc-200 p-3.5 rounded-lg overflow-x-auto border border-zinc-800">
 {`package com.newsrule.app;
 
 import android.os.Bundle;
@@ -274,21 +274,21 @@ public class MainActivity extends AppCompatActivity {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-3.5 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <EyeOff className="w-3.5 h-3.5 text-amber-400" />
+                <div className="p-3.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-300 dark:border-zinc-700/50">
+                  <h4 className="text-xs font-bold text-zinc-950 dark:text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <EyeOff className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
                     Recents & Multitask Blackout
                   </h4>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
                     Blanks the app stream whenever switching TV HDMI inputs or opening the TV launcher task switcher to avoid thumbnail cache exposure.
                   </p>
                 </div>
-                <div className="p-3.5 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-cyan-400" />
+                <div className="p-3.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-300 dark:border-zinc-700/50">
+                  <h4 className="text-xs font-bold text-zinc-950 dark:text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-cyan-700 dark:text-cyan-400" />
                     Anti-Copy & Scraping Guard
                   </h4>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
                     Intersects text selection, right-click context menu, clipboard cut/copy events, and automated screen scrapers.
                   </p>
                 </div>
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                     onCloseDetailsModal();
                     onOpenTerms();
                   }}
-                  className="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition-colors text-center shadow-md shadow-amber-500/20"
+                  className="w-full py-2.5 px-4 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-bold text-sm transition-colors text-center shadow-md"
                 >
                   Review Terms of Service & Legal Policy
                 </button>
