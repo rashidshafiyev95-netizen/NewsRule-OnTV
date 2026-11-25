@@ -80,12 +80,22 @@ class SpeechAnchorService {
 
     // Phonetic voice fallbacks for regional languages without preinstalled OS TTS voices
     if (!anchorVoice) {
-      if (['az', 'tk', 'uz', 'kk', 'ky', 'ug'].includes(baseCode)) {
+      if (['az', 'tk', 'uz', 'kk', 'ky', 'ug', 'tt', 'ba', 'cv', 'crh', 'kaa', 'gag', 'tyv'].includes(baseCode)) {
         anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('tr'));
-      } else if (['be', 'tg', 'mn'].includes(baseCode)) {
+      } else if (['be', 'tg', 'mn', 'ce', 'os'].includes(baseCode)) {
         anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ru'));
-      } else if (['ps', 'sd', 'ku'].includes(baseCode)) {
+      } else if (['ps', 'sd', 'ku', 'ckb', 'ks', 'dv'].includes(baseCode)) {
         anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ar') || v.lang.toLowerCase().startsWith('fa'));
+      } else if (['bho', 'mai', 'doi', 'gom', 'sa'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('hi'));
+      } else if (['co', 'sc', 'scn', 'vec', 'lmo', 'lij'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('it'));
+      } else if (['br', 'oc', 'ht'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('fr'));
+      } else if (['an', 'ast', 'qu', 'gn', 'ay'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('es'));
+      } else if (['ban', 'ace', 'min', 'bug'].includes(baseCode)) {
+        anchorVoice = voices.find((v) => v.lang.toLowerCase().startsWith('id'));
       }
     }
 

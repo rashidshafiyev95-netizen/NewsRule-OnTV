@@ -33,6 +33,7 @@ import { AIStudioClient } from './services/aiStudioClient';
 import { getMockArticlesForLanguage } from './data/mockNews';
 import {
   AppLanguage,
+  TOTAL_SUPPORTED_LANGUAGES,
   getInitialAppLanguage,
   getLanguageMeta,
   getTranslations,
@@ -652,14 +653,14 @@ export default function App() {
             <span>{currentTime || '00:00:00'}</span>
           </div>
 
-          {/* Primary Action: Language Selector (102 Languages) */}
+          {/* Primary Action: Language Selector */}
           <button
             onClick={() => {
               soundFx.playSelect();
               setShowLanguageModal(true);
             }}
             className="px-3 py-1.5 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-white dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-amber-400 border border-zinc-950 dark:border-zinc-700/80 text-xs font-mono font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap"
-            title={`${t.selectLanguageTitle} (102 Languages) [L]`}
+            title={`${t.selectLanguageTitle} (${TOTAL_SUPPORTED_LANGUAGES} Languages) [L]`}
           >
             <Globe className={`w-3.5 h-3.5 text-amber-400 dark:text-cyan-400 ${isTranslatingUi || isFetchingAi ? 'animate-spin' : ''}`} />
             <span>{currentLanguage.toUpperCase()}</span>

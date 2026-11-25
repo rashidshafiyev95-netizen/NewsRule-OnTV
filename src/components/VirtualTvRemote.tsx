@@ -19,7 +19,7 @@ import {
   MoonStar
 } from 'lucide-react';
 import { soundFx } from '../services/soundFx';
-import { AppLanguage } from '../services/i18n';
+import { AppLanguage, TOTAL_SUPPORTED_LANGUAGES } from '../services/i18n';
 
 interface VirtualTvRemoteProps {
   onNavigate: (direction: 'up' | 'down' | 'left' | 'right') => void;
@@ -161,7 +161,7 @@ export const VirtualTvRemote: React.FC<VirtualTvRemoteProps> = ({
                 if (onOpenLanguage) onOpenLanguage();
               }}
               className="py-1.5 px-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-950 border border-zinc-300 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-[10px] font-bold dark:text-amber-400 dark:border-amber-500/40 flex items-center justify-center gap-0.5 transition-colors"
-              title="Select Language (102 Languages) [L]"
+              title={`Select Language (${TOTAL_SUPPORTED_LANGUAGES} Languages) [L]`}
             >
               <Globe className="w-3 h-3 text-cyan-700 dark:text-cyan-400 shrink-0" />
               <span className="uppercase truncate max-w-[36px]">{currentLanguage}</span>
